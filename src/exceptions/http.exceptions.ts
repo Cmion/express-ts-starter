@@ -9,6 +9,13 @@ class HttpException extends Error {
     message: string;
   };
 
+  /**
+   * Base HTTP Exception class
+   * @param message Http error message
+   * @param status Http status code
+   * @param description Error description
+   * @param code Error code [default to HTTP Status Codes]
+   */
   constructor(message: string | Record<string, any>, status: number, description?: string, code?: number) {
     const enumeratedMessage = enumerateErrorMessages(message);
     const httpError: HTTPError = HttpError[String(status)];
