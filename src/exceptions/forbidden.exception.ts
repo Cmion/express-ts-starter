@@ -2,10 +2,10 @@ import HttpStatus from '../enums/http-status.enums';
 import HttpException from './http.exceptions';
 import { HttpError } from '../utils/constants/http-errors.contants';
 
-class UnauthorizedException extends HttpException {
+class ForbiddenException extends HttpException {
   constructor(message?: string | Record<string, any>) {
-    super(message ?? HttpError['BAD_REQUEST'].message, HttpStatus.UNAUTHORIZED);
+    super(message ?? HttpError['FORBIDDEN'].message, HttpStatus.FORBIDDEN);
   }
 }
 
-export default UnauthorizedException;
+export default ForbiddenException;

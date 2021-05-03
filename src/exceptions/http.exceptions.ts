@@ -1,7 +1,7 @@
 import { enumerateErrorMessages } from '../utils/helpers/_error';
 import { HttpError, HTTPError } from '../utils/constants/http-errors.contants';
 
-class BaseException extends Error {
+class HttpException extends Error {
   readonly description: string;
   readonly code: number;
   readonly http_response: {
@@ -49,4 +49,4 @@ class BaseException extends Error {
   }
 }
 
-export default BaseException;
+export default HttpException;
