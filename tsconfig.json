@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "outDir": "dist",
+      "sourceMap": true,
+      "incremental": true,
+      "declaration": true,
+      "removeComments": true,
+      "esModuleInterop": true,
+      "typeRoots": ["./src/types"]
+    },
+    "include": ["src/**/*.ts", "src/bin/www.js"],
+    "exclude": ["node_modules", ".vscode"]
+  }
