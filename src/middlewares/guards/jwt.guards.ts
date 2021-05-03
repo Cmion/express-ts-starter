@@ -4,11 +4,14 @@ import { Response, Request, NextFunction } from 'express';
 import { last, get } from 'lodash';
 import UnauthorizedException from '../../exceptions/unauthorized.exception';
 import { AccountModel } from '../../core/account/model/account.model';
+import locale from '../../locale';
+import { AppLocale } from '../../interfaces/locales.interface';
+import SupportedLocales from '../../enums/supported-locale.enums';
 
-const _enumJWTError = (err: Error) => {
-  let message = 'Failed to authenticate token';
+const _enumerateJWTError = (err: Error, appLocale: AppLocale) => {
+  let message = get(appLocale, 'auth.authorizationError');
   if (err.name && err.name === 'TokenExpiredError') {
-    message = 'You are not logged in!';
+    message = get(appLocale, 'auth.expiredToken');
   }
 
   return message;
@@ -21,11 +24,13 @@ const JWTGuard = (request: Request, response: Response, next: NextFunction) => {
 
   const serverSecret = config.get<string>('app.secrets.serverSecret');
 
+  const appLocale = locale.get(request?.locale ?? SupportedLocales.EN);
+
   if (jwtToken) {
     // Verify JWT Token.
     verify(jwtToken, serverSecret, { ignoreExpiration: false }, async (err, decoded) => {
       if (err) {
-        let message = _enumJWTError(err);
+        let message = _enumerateJWTError(err, appLocale);
         return next(new UnauthorizedException(message));
       }
 
@@ -34,12 +39,12 @@ const JWTGuard = (request: Request, response: Response, next: NextFunction) => {
       const account = AccountModel.findById(authID);
 
       if (!account) {
-        return next(new UnauthorizedException('message'));
+        return next(new UnauthorizedException(get(appLocale, 'auth.invalidUserAccess')));
       }
     });
   }
 
-  return next();
+  return next(new UnauthorizedException(get(appLocale, 'auth.invalidUserAccess')));
 };
 
 export default JWTGuard;

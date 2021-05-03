@@ -1,0 +1,20 @@
+{
+    "auth":{
+      "credentialIncorrect":"Username or password is not correct",
+      "authenticationFailed":"Authentication Failed! Wrong username or password",
+      "invalidUserAccess":"Could not authenticate user",
+      "inputs":"Bad input error",
+      "expiredToken":"You are not logged in!",
+      "authorizationError":"Failed to authenticate token"
+    },
+    "error":{
+      "server":"Error in setup interaction",
+      "resourceNotFound":"Resource not found!"
+    },
+    "users":{
+      "created":"User successfully created",
+      "updated":"User successfully updated",
+      "deleted":"User successfully deleted",
+      "notFound":"User not found"
+    }
+  }

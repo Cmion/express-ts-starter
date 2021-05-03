@@ -1,5 +1,5 @@
 export const apiConfig = {
-  defaultLocale: 'en',
+  defaultLocale: 'EN',
   prefix: '^/v[1-9]',
   versions: [1],
   pagination: {

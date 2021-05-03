@@ -3,12 +3,10 @@ import { AppResponseInterface } from '../interfaces/app-response.interface';
 import { ResponseMeta } from '../interfaces/response-meta.interface';
 import { Pagination } from './pagination.class';
 
-
-
 export class AppResponse {
   // static toResponse(meta:)
-  private static metaDefaults() {
-    return { statusCode: HttpStatus.OK };
+  static metaDefaults() {
+    return { status: HttpStatus.OK };
   }
   static toMeta(option: any): ResponseMeta {
     const meta: ResponseMeta = AppResponse.metaDefaults();
@@ -23,9 +21,22 @@ export class AppResponse {
       meta.message = option?.message;
     }
 
-    if (option?.statusCode) {
-      meta.statusCode = option?.statusCode;
+    if (option?.status) {
+      meta.status = option?.status;
     }
+
+    if (option?.description) {
+      meta.description = option?.description;
+    }
+
+    if (option?.code) {
+      meta.code = option?.code;
+    }
+
+    if (option?.http_response) {
+      meta.http_response = option?.http_response;
+    }
+
     return meta;
   }
 
