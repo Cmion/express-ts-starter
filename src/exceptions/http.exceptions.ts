@@ -1,5 +1,6 @@
 import { enumerateErrorMessages } from '../utils/helpers/_error';
 import { HttpError, HTTPError } from '../utils/constants/http-errors.contants';
+import { isPlainObject } from 'lodash';
 
 class HttpException extends Error {
   readonly description: string;

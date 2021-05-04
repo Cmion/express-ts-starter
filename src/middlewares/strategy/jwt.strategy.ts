@@ -3,7 +3,7 @@ import config from 'config';
 import { Response, Request, NextFunction } from 'express';
 import { last, get } from 'lodash';
 import UnauthorizedException from '../../exceptions/unauthorized.exception';
-import { AccountModel } from '../../core/account/model/account.model';
+import { AccountModel } from '../../core/account/schema/account.schema';
 import locale from '../../locale';
 import { AppLocale } from '../../interfaces/locales.interface';
 import SupportedLocales from '../../enums/supported-locale.enums';

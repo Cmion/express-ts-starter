@@ -1,29 +1,45 @@
-import { Schema } from 'mongoose';
-import { AccountDocument, AccountQuery } from '../interface/account.interface';
+import { Model, model, Query, Schema, Document } from 'mongoose';
 import { genSalt as generateSalt, hash as hashPassword } from 'bcrypt';
 import validator from 'validator';
-import { setLastSeenAt } from '../methods/account.methods';
-import { findByEmail } from '../statics/account.statics';
+import { Account } from '../entity/account.entity';
 
-const AccountSchema: Schema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: function (v) {
-        return validator.isEmail(v);
+export type AccountDocument = Document & Account;
+
+export type AccountModel = Model<AccountDocument>;
+
+export type AccountQuery = Query<Account, AccountDocument>;
+
+const AccountSchema: Schema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: function (v) {
+          return validator.isEmail(v);
+        },
+        message: (props) => `${props.value} is not a valid email!`,
       },
-      message: (props) => `${props.value} is not a valid email!`,
+    },
+    password: { type: String, required: true },
+    lastSeenAt: {
+      type: Date,
+      default: new Date(),
+    },
+    isVerified: Boolean,
+    deleted: {
+      type: Boolean,
+      default: false,
+      select: false,
     },
   },
-  password: { type: String, required: true },
-  lastSeenAt: {
-    type: Date,
-    default: new Date(),
+  {
+    autoCreate: true,
+    timestamps: true,
+    toJSON: { virtuals: true },
   },
-  isVerified: Boolean,
-});
+);
 
 // Middlewares
 AccountSchema.pre<AccountDocument>('save', function (next) {
@@ -71,9 +87,20 @@ AccountSchema.pre<AccountQuery>('findOneAndUpdate', function (next) {
 });
 
 // Statics
-AccountSchema.statics.findByEmail = findByEmail;
+AccountSchema.statics.findByEmail = async function findByEmail(
+  this: AccountModel,
+  email: string,
+): Promise<AccountDocument[]> {
+  return this.find({ email });
+};
+AccountSchema.statics.options = () => ({
+  softDelete: true,
+  uniques: [],
+  returnDuplicate: false,
+  fillables: [],
+  updateFillables: [],
+  hiddenFields: ['delete', 'password'],
+});
+// AccountSchema.statics.hiddenFields = ['password', 'deleted'];
 
-// Methods.
-AccountSchema.methods.setLastSeenAt = setLastSeenAt;
-
-export default AccountSchema;
+export const AccountModel = model<AccountDocument>('accounts', AccountSchema);

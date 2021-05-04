@@ -4,4 +4,6 @@ export interface Paginate {
   next: number;
   prev: number;
   per_page: number;
+  skip: number;
+  morePages(count: number): boolean;
 }

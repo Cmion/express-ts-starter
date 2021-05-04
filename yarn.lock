@@ -212,6 +212,11 @@
   resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.1.3.tgz#366b394aa3fbeed2392bf0a20ded606fa4a3d35e"
   integrity sha512-DaOWN1zf7j+8nHhqXhIgNmS+ltAC53NXqGxYuBhWqWgqolRhddKzfZU814lkHQSTG0IUfQxU7Cg0gb8fFWo2mA==
 
+"@types/validatorjs@^3.15.0":
+  version "3.15.0"
+  resolved "https://registry.yarnpkg.com/@types/validatorjs/-/validatorjs-3.15.0.tgz#2d7d00c5da82d53bf367d6674abc66eaee11ed7d"
+  integrity sha512-tqozguXICRdPQVGho1A+lYH4IzU3ggP82OmfFrmb6N6pxmWuXegpw4Th20hy5KtMfuyP+jXB466ABFMO9vma4Q==
+
 "@types/winston@^2.4.4":
   version "2.4.4"
   resolved "https://registry.yarnpkg.com/@types/winston/-/winston-2.4.4.tgz#48cc744b7b42fad74b9a2e8490e0112bd9a3d08d"
@@ -2753,6 +2758,11 @@ validator@^13.6.0:
   version "13.6.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-13.6.0.tgz#1e71899c14cdc7b2068463cb24c1cc16f6ec7059"
   integrity sha512-gVgKbdbHgtxpRyR8K0O6oFZPhhB5tT1jeEHZR0Znr9Svg03U0+r9DXWMrnRAB+HtCStDQKlaIZm42tVsVjqtjg==
+
+validatorjs@^3.22.1:
+  version "3.22.1"
+  resolved "https://registry.yarnpkg.com/validatorjs/-/validatorjs-3.22.1.tgz#13dbbe6556cf4ab87759105d13b1d31a9a54ce54"
+  integrity sha512-451KiCt/3E8qV/8fOUdO0YkA8zUdQBNVxubg9jvgEB+JAg9IlRKrClzwq2ir2ndj7TWmPYQ7bXFb4BxcyX2iWw==
 
 vary@^1, vary@~1.1.2:
   version "1.1.2"
