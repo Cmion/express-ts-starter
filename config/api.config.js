@@ -1,7 +1,7 @@
-export const apiConfig = {
+module.exports = {
   defaultLocale: 'EN',
   prefix: '^/v[1-9]',
-  versions: [1],
+  version: 1,
   pagination: {
     itemsPerPage: 10,
   },

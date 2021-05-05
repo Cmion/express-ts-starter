@@ -1,6 +1,6 @@
 const PORT = process.env.PORT || 3000;
 
-export const appConfig = {
+module.exports= {
   appName: process.env.APP_NAME || 'App Name',
   environment: process.env.NODE_ENV || 'dev',
   baseUrl: `http://localhost:${PORT}`,
