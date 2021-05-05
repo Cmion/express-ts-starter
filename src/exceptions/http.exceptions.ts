@@ -1,6 +1,5 @@
 import { enumerateErrorMessages } from '../utils/helpers/_error';
 import { HttpError, HTTPError } from '../utils/constants/http-errors.contants';
-import { isPlainObject } from 'lodash';
 
 class HttpException extends Error {
   readonly description: string;
@@ -18,9 +17,10 @@ class HttpException extends Error {
    * @param code Error code [default to HTTP Status Codes]
    */
   constructor(message: string | Record<string, any>, status: number, description?: string, code?: number) {
-    const enumeratedMessage = enumerateErrorMessages(message);
+
     const httpError: HTTPError = HttpError[String(status)];
 
+    const enumeratedMessage = enumerateErrorMessages(message);
     super(enumeratedMessage);
 
     this.http_response = {

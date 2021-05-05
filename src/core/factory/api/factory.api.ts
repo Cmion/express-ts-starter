@@ -4,12 +4,14 @@ import controllers from '../../base/controller/base.controller';
 import NotFoundException from '../../../exceptions/not-found.exception';
 import APIKeyGuard from '../../../middlewares/guards/api-key.guard';
 import BaseExceptionFilter from '../../../middlewares/filters/base-exception.filter';
+import LocaleGuard from '../../../middlewares/guards/locale.guard';
 
 const prefix = config.get<string>('api.prefix');
 const version = config.get<string>('api.version');
 
 export const APIFactory = (app: Express) => {
   app.use(prefix, APIKeyGuard);
+  app.use(prefix, LocaleGuard);
 
   app.use(`/v${version}`, controllers);
 
@@ -25,5 +27,3 @@ export const APIFactory = (app: Express) => {
 
   return app;
 };
-
-

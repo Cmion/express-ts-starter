@@ -6,7 +6,7 @@ import { Pagination } from './pagination.class';
 export class AppResponse {
   // static toResponse(meta:)
   static metaDefaults() {
-    return { status: HttpStatus.OK };
+    return { code: HttpStatus.OK };
   }
   static toMeta(option: any): ResponseMeta {
     const meta: ResponseMeta = AppResponse.metaDefaults();
@@ -19,10 +19,6 @@ export class AppResponse {
 
     if (option?.message) {
       meta.message = option?.message;
-    }
-
-    if (option?.status) {
-      meta.status = option?.status;
     }
 
     if (option?.description) {
