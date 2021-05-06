@@ -25,6 +25,10 @@ export class AppResponse {
       meta.description = option?.description;
     }
 
+    if (option?.details) {
+      meta.details = option?.details;
+    }
+
     if (option?.code) {
       meta.code = option?.code;
     }

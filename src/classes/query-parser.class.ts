@@ -92,7 +92,7 @@ export class QueryParser {
           result[r.key] = { $regex: q, $options: 'i' };
         }
       } catch (e) {
-        console.log(e);
+        logger.debug(e);
       }
     }
     return result;
@@ -106,7 +106,7 @@ export class QueryParser {
       try {
         this.population = JSON.parse(value.toString());
       } catch (e) {
-        logger.log(e);
+        logger.debug(e);
       }
     }
   }

@@ -5,7 +5,7 @@ export const validatePassword = async (
   hashedPassword: string,
   plainPassword: string,
 ): Promise<boolean> => {
-  console.log({ hashedPassword, plainPassword });
+  // console.log({ hashedPassword, plainPassword });
   if (!isEmpty(hashedPassword) && !isEmpty(plainPassword)) {
     return await compare(plainPassword, hashedPassword);
   }

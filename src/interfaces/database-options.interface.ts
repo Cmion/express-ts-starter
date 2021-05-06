@@ -1,4 +1,4 @@
-export interface DBOptions {
+export interface SchemaConfigs {
   softDelete?: boolean;
   uniques?: any[];
   returnDuplicate?: boolean;

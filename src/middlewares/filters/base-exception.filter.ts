@@ -21,7 +21,7 @@ const ExceptionFilter = (error: any, request: Request, response: Response, next:
   }
 
   if (`${config.util.getEnv('NODE_ENV')}` !== 'production') {
-    logger.log('error >>>>>>>>>>>>>>> ', error);
+    logger.debug(error);
   }
 
   return response.status(error?.status ?? 500).json(

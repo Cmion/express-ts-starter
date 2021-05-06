@@ -1,56 +1,45 @@
-import { Model, Query } from 'mongoose';
+import Mongoose, { Query } from 'mongoose';
 import { ProcessorFactory } from '../../factory/processor/factory.processor';
-import { AccountDocument, AccountModel } from '../schema/account.schema';
-import { isFunction, pick } from 'lodash';
+import { AccountDocument, AccountModel, AccountModelType } from '../schema/account.schema';
+import { pick } from 'lodash';
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import NotFoundException from '../../../exceptions/not-found.exception';
 import UnauthorizedException from '../../../exceptions/unauthorized.exception';
 import { validatePassword } from '../../../utils/validators/password.validator';
 import locale from '../../../locale';
 import SupportedLocales from '../../../enums/supported-locale.enums';
 import { LoginInterface } from '../entity/login.interface';
-// import InternalServerErrorException from '../../../exceptions/internal-server.exception';
 import { Response, Request, NextFunction } from 'express';
-import BadRequestException from '../../../exceptions/bad-request.exception';
-import { AccountValidator } from '../validator/account.validator';
 import HttpException from '../../../exceptions/http.exceptions';
 import HttpStatus from '../../../enums/http-status.enums';
 
-export class AccountProcessor extends ProcessorFactory<Model<AccountDocument>> {
-  constructor() {
-    const options = AccountModel.schema.statics['options'];
-    super(AccountModel, isFunction(options) ? options() : {});
-  }
-
-  async test(request: Request, response: Response, next: NextFunction) {
+export class AccountProcessor {
+  static async test(request: Request, response: Response, next: NextFunction) {
     return response.status(HttpStatus.OK).json({ data: 'testing' });
   }
 
-  async login(request: Request, response: Response, next: NextFunction) {
+  static async login(request: Request, response: Response, next: NextFunction) {
     let session;
+    const model = AccountModel;
+
+    const processorFactory = new ProcessorFactory<AccountModelType>(model);
+
     try {
-      session = await this.model.startSession();
+      session = await Mongoose.startSession();
       session.startTransaction();
-      const loginDetails = request.body() as LoginInterface;
 
-      // const appLocale = locale.get(request?.locale ?? SupportedLocales.EN);
+      const loginDetails = request.body as LoginInterface;
 
-      const validator = await AccountValidator.login(loginDetails);
-      if (!validator.passed) {
-        return next(new BadRequestException(validator.errors));
-      }
+      const auth = model.findOne({ email: loginDetails.email }).select('+password');
 
-      const auth = this.model.findOne({ email: loginDetails.email }).select('+password');
-
-      const canLogin = await this.canLogin(auth, loginDetails);
+      const canLogin = await AccountProcessor.canLogin(auth, loginDetails);
       if (canLogin instanceof HttpException) {
         return next(canLogin);
       }
 
-      const token = await this.signToken(auth, {});
+      const token = await AccountProcessor.signToken(auth, {});
 
-      const data = this.toResponse({
+      const data = processorFactory.toResponse({
         token,
         code: HttpStatus.OK,
         value: {
@@ -60,6 +49,7 @@ export class AccountProcessor extends ProcessorFactory<Model<AccountDocument>> {
       });
 
       await session.commitTransaction();
+
       return response.status(HttpStatus.OK).json(data);
     } catch (e) {
       if (session) {
@@ -74,7 +64,7 @@ export class AccountProcessor extends ProcessorFactory<Model<AccountDocument>> {
    * @param {Object} user The user properties
    * @return {Promise<String>}
    */
-  protected async signToken(auth: any, user: any) {
+  protected static async signToken(auth: any, user: any) {
     const obj = {
       authId: auth._id,
       uuid: auth.publicId,
@@ -88,16 +78,16 @@ export class AccountProcessor extends ProcessorFactory<Model<AccountDocument>> {
    * @param {Object} object The object properties
    * @return {Object} returns the api error if main cannot be verified
    */
-  protected async canLogin(
+  protected static async canLogin(
     accountDoc: Query<AccountDocument, AccountDocument>,
     object: Record<string, any>,
-    localeISO: string | SupportedLocales = SupportedLocales.EN,
+    localeISO: string = SupportedLocales.EN,
   ) {
     const account = await accountDoc.exec();
 
-    const appLocale = locale.get(localeISO);
+    const appLocale = await locale.get(localeISO);
     if (!account) {
-      return new NotFoundException(appLocale.auth.credentialIncorrect);
+      return new UnauthorizedException(appLocale.auth.credentialIncorrect);
     }
     let authenticated = validatePassword(account.password, object.password);
     if (!authenticated) {

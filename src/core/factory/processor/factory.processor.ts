@@ -1,15 +1,18 @@
 import { Model } from 'mongoose';
 import { Pagination } from '../../../classes/pagination.class';
-import { DBOptions } from '../../../interfaces/database-options.interface';
+import { SchemaConfigs } from '../../../interfaces/database-options.interface';
 import { isFunction, omit, isPlainObject } from 'lodash';
 import { AppResponse } from '../../../classes/app-response.class';
 import { QueryParser } from '../../../classes/query-parser.class';
 import { Paginate } from '../../../interfaces/pagination.interface';
 
-export class ProcessorFactory<M extends Model<any>> {
+interface S extends Model<any> {
+  schemaConfigs(): SchemaConfigs;
+}
+export class ProcessorFactory<M extends S> {
   protected readonly collectionName: string;
 
-  constructor(protected readonly model: M, protected readonly options: DBOptions) {
+  constructor(protected readonly model: M) {
     this.collectionName = model.collection.collectionName;
   }
 
@@ -18,7 +21,7 @@ export class ProcessorFactory<M extends Model<any>> {
    * @param query
    * @returns {Boolean}
    */
-  protected isExisting(query: any) {
+  public isExisting(query: any) {
     if (isPlainObject(query)) {
       const itExists = this.model.findOne(query);
 
@@ -30,7 +33,7 @@ export class ProcessorFactory<M extends Model<any>> {
   /**
    * toResponse
    */
-  protected async toResponse(options: Record<string, any>) {
+  public async toResponse(options: Record<string, any>) {
     const queryParser = options?.queryParser;
     const pagination = Pagination.toObject(options?.pagination ?? {});
     let value;
@@ -47,19 +50,19 @@ export class ProcessorFactory<M extends Model<any>> {
       }
     }
 
-    const dbOptions = this.options;
-    if (dbOptions?.hiddenFields.length > 0) {
+    const schemaConfigs = this.model.schemaConfigs();
+    if (schemaConfigs?.hiddenFields.length > 0) {
       if (Array.isArray(value)) {
-        value = value.map((v) => omit(isFunction(value.toJSON) ? v.toJSON() : v, ...dbOptions.hiddenFields));
+        value = value.map((v) => omit(isFunction(value.toJSON) ? v.toJSON() : v, ...schemaConfigs.hiddenFields));
       } else {
-        value = omit(isFunction ? value.toJSON() : value, ...dbOptions.hiddenFields);
+        value = omit(isFunction ? value.toJSON() : value, ...schemaConfigs.hiddenFields);
       }
     }
 
     return AppResponse.toResponse(Object.assign({}, options, { pagination, value }));
   }
 
-  protected countQueryDocuments(query: any[]) {
+  public countQueryDocuments(query: any[]) {
     let count = this.model.aggregate(query.concat([{ $count: 'total' }]));
     count = count[0] ? count[0].total : 0;
     return count;
@@ -70,10 +73,12 @@ export class ProcessorFactory<M extends Model<any>> {
    * @param {Object} queryParser The query parser
    * @return {Object}
    */
-  protected async buildModelQueryObject(pagination: Paginate, queryParser: QueryParser = null) {
+  public async buildModelQueryObject(pagination: Paginate, queryParser: QueryParser = null) {
     let query = this.model.find(queryParser.query);
-    if (queryParser.search && this.options.searchQuery(queryParser.search).length > 0) {
-      const searchQuery = this.options.searchQuery(queryParser.search);
+    const schemaConfigs = this.model.schemaConfigs();
+
+    if (queryParser.search && schemaConfigs.searchQuery(queryParser.search).length > 0) {
+      const searchQuery = schemaConfigs.searchQuery(queryParser.search);
       queryParser.query = {
         $or: [...searchQuery],
         ...queryParser.query,

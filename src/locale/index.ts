@@ -1,21 +1,20 @@
 import config from 'config';
 import SupportedLocales from '../enums/supported-locale.enums';
-import { get, has } from 'lodash';
 import { AppLocale } from '../interfaces/locales.interface';
-const enLocale = require('./en.locale.json');
+import enLocale from './en.locale.json';
+import { SupportedLocalesArray } from '../utils/constants/locale.contant';
 
 const defaultLocale = config.get<SupportedLocales>('api.defaultLocale') ?? SupportedLocales.EN;
 
-const localeGetter = (localeName: SupportedLocales | string = defaultLocale): AppLocale => {
-  if (has(SupportedLocales, localeName)) {
+const get = async (locale: string = defaultLocale): Promise<AppLocale> => {
+  if (SupportedLocalesArray.includes(locale)) {
     try {
-      const locale = JSON.parse(require(`${get(SupportedLocales, localeName, 'EN')}.locale.json`));
-      return locale;
+      return await import(`./${locale ?? SupportedLocales.EN}.locale.json`);
     } catch {
-      return JSON.parse(enLocale);
+      return enLocale;
     }
   }
-  return JSON.parse(enLocale);
+  return enLocale;
 };
 
-export default { get: localeGetter };
+export default { get };

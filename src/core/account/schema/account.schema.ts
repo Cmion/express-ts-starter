@@ -2,10 +2,14 @@ import { Model, model, Query, Schema, Document } from 'mongoose';
 import { genSalt as generateSalt, hash as hashPassword } from 'bcrypt';
 import validator from 'validator';
 import { Account } from '../entity/account.entity';
+import { SchemaConfigs } from '../../../interfaces/database-options.interface';
 
 export type AccountDocument = Document & Account;
 
-export type AccountModel = Model<AccountDocument>;
+export interface AccountModelType extends Model<AccountDocument> {
+  findByEmail(): Promise<AccountDocument[]>;
+  schemaConfigs(): SchemaConfigs;
+}
 
 export type AccountQuery = Query<Account, AccountDocument>;
 
@@ -88,12 +92,13 @@ AccountSchema.pre<AccountQuery>('findOneAndUpdate', function (next) {
 
 // Statics
 AccountSchema.statics.findByEmail = async function findByEmail(
-  this: AccountModel,
+  this: AccountModelType,
   email: string,
 ): Promise<AccountDocument[]> {
   return this.find({ email });
 };
-AccountSchema.statics.options = () => ({
+
+AccountSchema.statics.schemaConfigs = (): SchemaConfigs => ({
   softDelete: true,
   uniques: [],
   returnDuplicate: false,
@@ -101,6 +106,5 @@ AccountSchema.statics.options = () => ({
   updateFillables: [],
   hiddenFields: ['delete', 'password'],
 });
-// AccountSchema.statics.hiddenFields = ['password', 'deleted'];
 
-export const AccountModel = model<AccountDocument>('accounts', AccountSchema);
+export const AccountModel: AccountModelType = model<AccountDocument, AccountModelType>('accounts', AccountSchema);

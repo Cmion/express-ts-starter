@@ -35,7 +35,7 @@ export const HttpError: Record<string, HTTPError> = {
   },
   '401': {
     code: 401,
-    message: 'You are unauthorized to access the requested resource. Please log in.',
+    message: 'You are unauthorized to access the requested resource.',
   },
   '403': {
     code: 403,
@@ -161,7 +161,7 @@ export const HttpError: Record<string, HTTPError> = {
   },
   UNAUTHORIZED: {
     code: 401,
-    message: 'You are unauthorized to access the requested resource. Please log in.',
+    message: 'You are unauthorized to access the requested resource.',
   },
   FORBIDDEN: {
     code: 403,

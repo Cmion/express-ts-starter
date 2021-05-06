@@ -5,11 +5,11 @@ const APIKeyGuard = (request: Request, response: Response, next: NextFunction) =
   // check header or url parameters or post parameters for token
   let apiKey = (request.query.api_key || request.headers['x-api-key']) as string;
   if (!apiKey) {
-    return next(new UnauthorizedException('API key absent'));
+    return next(new UnauthorizedException('Missing API key'));
   }
   // decode token
   if (apiKey !== process.env.API_KEY && !process.env.API_KEY.includes(apiKey)) {
-    return next(new UnauthorizedException());
+    return next(new UnauthorizedException("Invalid API key"));
   }
   // if there is no token, return an error
   return next();

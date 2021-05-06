@@ -165,7 +165,7 @@ export class ControllerFactory {
     guards: ExpressMiddleWareFunction[] = [],
     interceptors: ExpressMiddleWareFunction[] = [],
   ): ControllerFactoryInterface {
-    return { path, handler, guards, interceptors, method };
+    return { path, handler, guards, interceptors, method: toLower(method) };
   }
 
   /**

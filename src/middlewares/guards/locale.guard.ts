@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from 'express';
-import { SupportedLocalesArray } from '../../utils/constants/locale.contant';
 import SupportedLocales from '../../enums/supported-locale.enums';
+import { SupportedLocalesArray } from '../../utils/constants/locale.contant';
 
 const LocaleGuard = (request: Request, response: Response, next: NextFunction) => {
   // check header or url parameters or post parameters for locale

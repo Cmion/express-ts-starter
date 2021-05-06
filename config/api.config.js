@@ -1,5 +1,5 @@
 module.exports = {
-  defaultLocale: 'EN',
+  defaultLocale: 'en',
   prefix: '^/v[1-9]',
   version: 1,
   pagination: {

@@ -6,7 +6,6 @@ import UnauthorizedException from '../../exceptions/unauthorized.exception';
 import { AccountModel } from '../../core/account/schema/account.schema';
 import locale from '../../locale';
 import { AppLocale } from '../../interfaces/locales.interface';
-import SupportedLocales from '../../enums/supported-locale.enums';
 
 const _enumerateJWTError = (err: Error, appLocale: AppLocale) => {
   let message = get(appLocale, 'auth.authorizationError');
@@ -17,14 +16,14 @@ const _enumerateJWTError = (err: Error, appLocale: AppLocale) => {
   return message;
 };
 
-const JWTGuard = (request: Request, response: Response, next: NextFunction) => {
+const JWTGuard = async (request: Request, response: Response, next: NextFunction) => {
   const tokenWithBearer = request.headers['authorization'];
 
-  const jwtToken = last(tokenWithBearer.split(' '));
+  const jwtToken = last(tokenWithBearer?.split?.(' ') ?? []);
 
   const serverSecret = config.get<string>('app.secrets.serverSecret');
 
-  const appLocale = locale.get(request?.locale ?? SupportedLocales.EN);
+  const appLocale = await locale.get(request?.locale);
 
   if (jwtToken) {
     // Verify JWT Token.
