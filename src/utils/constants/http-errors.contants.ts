@@ -107,6 +107,10 @@ export const HttpError: Record<string, HTTPError> = {
     code: 422,
     message: 'The request was well-formed but was unable to be followed due to semantic errors.',
   },
+  '429': {
+    code: 429,
+    message: 'Too many requests',
+  },
   '500': { code: 500, message: 'Unexpected internal server error.' },
   '501': {
     code: 501,
@@ -254,5 +258,9 @@ export const HttpError: Record<string, HTTPError> = {
   INITIALIZATION_FAILURE: {
     code: 550,
     message: 'A failure occurred during initialization of services. API will be unavailable.',
+  },
+  TOO_MANY_REQUESTS: {
+    code: 429,
+    message: 'Too many requests',
   },
 };

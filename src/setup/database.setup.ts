@@ -18,7 +18,7 @@ export const connect = () => {
 
   const connector = Mongoose.connect(uri, {
     useNewUrlParser: true,
-    useFindAndModify: true,
+    useFindAndModify: false,
     useUnifiedTopology: true,
     useCreateIndex: true,
   });  

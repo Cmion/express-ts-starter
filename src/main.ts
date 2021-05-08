@@ -3,7 +3,6 @@ import log from './setup/logger.setup';
 import dotenv from 'dotenv';
 import config from 'config';
 import logger from 'morgan';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { onServerError, onListening, normalizePort } from './utils/helpers/_server';
@@ -19,9 +18,9 @@ const app = express();
 
 app.use(logger('dev'));
 
-app.use(bodyParser.json());
+app.use(express.json());
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
 

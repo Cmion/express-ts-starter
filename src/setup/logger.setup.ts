@@ -9,7 +9,7 @@ const _createErrorFormat = format((info) => {
 //     );
 //   }
   if (info instanceof Error) {
-    return Object.assign({ message: `${info.message}\n============\n${info.stack}` }, info);
+    return Object.assign({ message: `${info.message}\n${info.stack}` }, info);
   }
   return info;
 });

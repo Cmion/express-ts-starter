@@ -1,6 +1,6 @@
 declare namespace Express {
   export interface Request {
-    authID?: string;
+    accountId?: string;
     locale?: string;
   }
 }

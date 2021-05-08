@@ -14,7 +14,7 @@ export class AppResponse {
       meta.token = option.token;
     }
     if (option?.pagination) {
-      meta.pagination = Pagination.toObject(option?.pagination);
+      meta.pagination = Pagination.fromObject(option?.pagination);
     }
 
     if (option?.message) {
@@ -41,9 +41,8 @@ export class AppResponse {
   }
 
   static toResponse(options: any): AppResponseInterface {
-    return {
-      meta: AppResponse.toMeta(options),
-      data: options?.value ?? null,
-    };
+    const response: AppResponseInterface = Object.assign({}, { meta: AppResponse.toMeta(options) });
+    if (options?.value) response.data = options.value;
+    return response;
   }
 }

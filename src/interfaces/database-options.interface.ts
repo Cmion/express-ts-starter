@@ -7,7 +7,7 @@ export interface SchemaConfigs {
   hiddenFields?: string[];
   searchQuery?: (
     query: string,
-  ) => [{ title: { $regex: RegExp; $options: 'i' } }, { description: { $regex: RegExp; $options: 'i' } }];
+  ) => Record<string, any>[];
 }
 // searchQuery = (q) => {
 //     const regex = new RegExp(q);

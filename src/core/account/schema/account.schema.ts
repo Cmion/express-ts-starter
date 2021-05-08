@@ -27,11 +27,20 @@ const AccountSchema: Schema = new Schema(
       },
     },
     password: { type: String, required: true },
-    lastSeenAt: {
+    last_seen_at: {
       type: Date,
       default: new Date(),
     },
-    isVerified: Boolean,
+    is_verified: {
+      type: Boolean,
+      default: false,
+    },
+    verification_code: String,
+    verification_code_expiration: Date,
+    verification_code_retry_count: {
+      type: Number,
+      default: 0,
+    },
     deleted: {
       type: Boolean,
       default: false,
@@ -72,7 +81,7 @@ AccountSchema.pre<AccountQuery>('findOneAndUpdate', function (next) {
   const updateFields = this.getUpdate()[0];
 
   // Generate a salt and use it to hash the user's password
-  if (updateFields.password) {
+  if (updateFields?.password) {
     generateSalt(10, (genSaltError, salt) => {
       if (genSaltError) {
         return next(genSaltError);
@@ -104,7 +113,13 @@ AccountSchema.statics.schemaConfigs = (): SchemaConfigs => ({
   returnDuplicate: false,
   fillables: [],
   updateFillables: [],
-  hiddenFields: ['delete', 'password'],
+  hiddenFields: [
+    'delete',
+    'password',
+    'verification_code',
+    'verification_code_expiration',
+    'verification_code_retry_count',
+  ],
 });
 
 export const AccountModel: AccountModelType = model<AccountDocument, AccountModelType>('accounts', AccountSchema);

@@ -16,7 +16,7 @@ export class Pagination {
     };
   }
 
-  static toObject(options: any): Paginate {
+  static fromObject(options: any): Paginate {
     const pagination = Pagination.defaults();
     pagination.total = options?.total ?? 0;
     pagination.current = options?.current ?? options?.page ?? 1;

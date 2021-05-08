@@ -4,7 +4,7 @@ import { HttpError } from '../utils/constants/http-errors.contants';
 
 class UnauthorizedException extends HttpException {
   constructor(message?: string | Record<string, any>) {
-    super(message ?? HttpError['UNAUTHORIZED'].message, HttpStatus.UNAUTHORIZED);
+    super(message ?? HttpError.UNAUTHORIZED.message, HttpStatus.UNAUTHORIZED);
   }
 }
 

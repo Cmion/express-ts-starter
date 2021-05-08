@@ -6,11 +6,12 @@ import UnauthorizedException from '../../exceptions/unauthorized.exception';
 import { AccountModel } from '../../core/account/schema/account.schema';
 import locale from '../../locale';
 import { AppLocale } from '../../interfaces/locales.interface';
+import NotFoundException from '../../exceptions/not-found.exception';
 
 const _enumerateJWTError = (err: Error, appLocale: AppLocale) => {
-  let message = get(appLocale, 'auth.authorizationError');
+  let message = get(appLocale, 'auth.authorization_error');
   if (err.name && err.name === 'TokenExpiredError') {
-    message = get(appLocale, 'auth.expiredToken');
+    message = get(appLocale, 'auth.expired_token');
   }
 
   return message;
@@ -33,17 +34,19 @@ const JWTGuard = async (request: Request, response: Response, next: NextFunction
         return next(new UnauthorizedException(message));
       }
 
-      const authID = get(decoded, 'authID', '');
-      request.authID = authID;
-      const account = AccountModel.findById(authID);
+      const accountId = get(decoded, 'accountId', '');
+      request.accountId = accountId;
+      const account = await AccountModel.findById(accountId).exec();
 
       if (!account) {
-        return next(new UnauthorizedException(get(appLocale, 'auth.invalidUserAccess')));
+        return next(new NotFoundException(get(appLocale, 'auth.account_not_found')));
       }
+      next()
     });
   }
 
-  return next(new UnauthorizedException(get(appLocale, 'auth.invalidUserAccess')));
+  if (!jwtToken) return next(new UnauthorizedException(get(appLocale, 'auth.invalid_user_access')));
+  
 };
 
 export default JWTGuard;

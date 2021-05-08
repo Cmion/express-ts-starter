@@ -1,20 +1,40 @@
 {
-    "auth":{
-      "credentialIncorrect":"Username or password is not correct",
-      "authenticationFailed":"Authentication Failed! Wrong username or password",
-      "invalidUserAccess":"Could not authenticate user",
-      "inputs":"Bad input error",
-      "expiredToken":"You are not logged in!",
-      "authorizationError":"Failed to authenticate token"
-    },
-    "error":{
-      "server":"Error in setup interaction",
-      "resourceNotFound":"Resource not found!"
-    },
-    "users":{
-      "created":"User successfully created",
-      "updated":"User successfully updated",
-      "deleted":"User successfully deleted",
-      "notFound":"User not found"
-    }
+  "auth": {
+    "incorrect_credentials": "Username or password is not correct",
+    "authentication_failed": "Authentication Failed! Wrong username or password",
+    "invalid_user_access": "Could not authenticate user",
+    "expired_token": "You are not logged in!",
+    "authorization_error": "Failed to authenticate token",
+    "duplicate_error": "Account already exists. Please log in!",
+    "account_not_found": "Account not found",
+    "credential_incorrect": "Email or password is not correct",
+    "account_suspended": "Your account has been suspended, Contact us to see why",
+    "account_archived": "Your account has been archived",
+    "password_reset_unauthorized": "You are not authorized to perform password reset",
+    "password_reset_link_expired": "Your reset link and code has expired, please request a new one",
+    "verification_successful": "Verification successful!",
+    "verification_unauthorized": "You are not authorized to perform verification",
+    "verification_code_retry_reached": "You've reached your max retry limit, please request a new code",
+    "verification_code_resend": "Verification code sent",
+    "account_does_not_exist": "An account with this email does not exist",
+    "invalid_verification_code": "Invalid verification code",
+    "verification_code_expired": "Verification code has expired",
+    "account_verified": "Your account has already been verified",
+    "account_not_verified": "Your account has not been verified, please verify and try again.",
+    "mobile_verified": "Your mobile number has already been verified",
+    "incorrect_password": "Operation failed, incorrect password!",
+    "email_does_not_exist": "Email does not exist",
+    "verification_mobile_sent": "Verification code sent to mobile number",
+    "social_account_error": "Sorry we cannot verify your social account at the moment"
+  },
+  "error": {
+    "server": "Error in setup interaction",
+    "resourceNotFound": "Resource not found!"
+  },
+  "users": {
+    "created": "User successfully created",
+    "updated": "User successfully updated",
+    "deleted": "User successfully deleted",
+    "notFound": "User not found"
   }
+}

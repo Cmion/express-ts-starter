@@ -4,7 +4,7 @@ import HttpException from './http.exceptions';
 
 class NotFoundException extends HttpException {
   constructor(message?: string | Record<string, any>) {
-    super(message ?? HttpError['NOT_FOUND'].message, HttpStatus.NOT_FOUND);
+    super(message ?? HttpError.NOT_FOUND.message, HttpStatus.NOT_FOUND);
   }
 }
 
