@@ -1,9 +1,14 @@
 import { createTransport } from 'nodemailer';
 import config from 'config';
 import logger from '../../../setup/logger.setup';
+import { WorkerFactory } from '../worker/worker.factory';
+import { ConsumeMessage } from 'amqplib';
+import { SMSFactory } from '../sms/factory.sms';
 
 export class MailFactory {
-  private mailTrap() {
+  static MailQueue = 'mail-queue';
+
+  protected static mailTrap() {
     return createTransport({
       host: config.get<string>('mail.mailTrap.host'),
       port: config.get<number>('mail.mailTrap.port'),
@@ -14,9 +19,27 @@ export class MailFactory {
       },
     });
   }
-  public async useMailTrap(recepient: string, subject: string, template: string, text: string) {
+
+  static async useMailTrap(recepient: string, subject: string, template: string, text: string) {
+    await WorkerFactory.publish({ recepient, subject, template, text, mailType: 'mailTrap' }, MailFactory.MailQueue);
+  }
+
+  static async $consumeWorker() {
+    await WorkerFactory.consume(MailFactory.MailQueue, (message: ConsumeMessage) => {
+      try {
+        const data = JSON.parse(message.content.toString());
+        if (data.mailType === 'mailTrap') {
+          MailFactory.$doMailTrap(data.recepient, data.subject, data.template, data.text);
+        }
+      } catch (e) {
+        logger.debug(e);
+      }
+    });
+  }
+
+  protected static async $doMailTrap(recepient: string, subject: string, template: string, text: string) {
     try {
-      const transporter = this.mailTrap();
+      const transporter = MailFactory.mailTrap();
 
       const options = {
         from: config.get<string>('mail.mailSender'),
@@ -25,14 +48,14 @@ export class MailFactory {
         text,
         html: template,
       };
-     const response = await transporter.sendMail(options);
-     return response
+      const response = await transporter.sendMail(options);
+      return response;
     } catch (e) {
       logger.error(e);
     }
   }
 
-  public HTMLVerificationTemplate(code: string) {
+  static HTMLVerificationTemplate(code: string) {
     return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
     
@@ -329,7 +352,7 @@ export class MailFactory {
     `;
   }
 
-  public TextVerificationTemplate(code: string) {
+  static TextVerificationTemplate(code: string) {
     return `Fibonacci
       Verify your email address
       Thanks for signing up for Straper! We're excited to have you. We need a little more information to complete your registration, including a confirmation of your email address.

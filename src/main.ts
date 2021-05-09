@@ -28,9 +28,14 @@ app.use(cors());
 
 const database = connect();
 
-const controllers = database.then(() => {
-  log.debug('API routes loaded');
-  return APIFactory(app);
+const workers = database.then(async () => {
+  log.debug('Workers consumed...');
+  return await APIFactory.$consumeWorkers();
+});
+
+const controllers = workers.then(() => {
+  log.debug('Application routes loaded...');
+  return APIFactory.configure(app);
 });
 
 const server = controllers.then((expressApp: Express) => {

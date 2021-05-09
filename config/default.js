@@ -8,10 +8,11 @@ const appConfig = require('./app.config');
 const databaseConfig = require('./database.config');
 const mailConfig = require('./mail.config');
 const smsConfig = require('./sms.config');
+const workerConfig = require('./worker.config');
 
 const config = Object.assign(
   {},
-  { api: apiConfig, database: databaseConfig, app: appConfig, mail: mailConfig, sms: smsConfig },
+  { api: apiConfig, database: databaseConfig, app: appConfig, mail: mailConfig, sms: smsConfig, worker: workerConfig },
 );
 
 module.exports = config;

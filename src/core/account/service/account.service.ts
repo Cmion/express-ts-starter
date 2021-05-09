@@ -67,18 +67,15 @@ export class AccountService extends ServiceFactory<AccountModelType> {
 
       await session.commitTransaction();
 
-      const mailFactory = new MailFactory();
-
-      await mailFactory.useMailTrap(
+      await MailFactory.useMailTrap(
         account.email,
         'Thanks for signing up with Fibonacci',
-        mailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
-        mailFactory.TextVerificationTemplate(accountAuth.verification_code),
+        MailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
+        MailFactory.TextVerificationTemplate(accountAuth.verification_code),
       );
 
-      const smsFactory = new SMSFactory();
 
-      await smsFactory.sendTwilioVerificationCode(registerDTO.mobile, accountAuth.verification_code);
+      await SMSFactory.sendTwilioVerificationCode(registerDTO.mobile, accountAuth.verification_code);
 
       return data;
     } catch (e) {
@@ -209,18 +206,15 @@ export class AccountService extends ServiceFactory<AccountModelType> {
 
     const updatedAccount = await this.model.findByIdAndUpdate(accountId, { $set: accountAuth }, { new: true });
 
-    const mailFactory = new MailFactory();
-
-    await mailFactory.useMailTrap(
+    await MailFactory.useMailTrap(
       accountObject.email,
       'Thanks for signing up with Fibonacci',
-      mailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
+      MailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
       'Hello World',
     );
 
-    const smsFactory = new SMSFactory();
 
-    await smsFactory.sendTwilioVerificationCode(updatedAccount.mobile, accountAuth.verification_code);
+    await SMSFactory.sendTwilioVerificationCode(updatedAccount.mobile, accountAuth.verification_code);
 
     return await this.toResponse({
       code: HttpStatus.OK,
