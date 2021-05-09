@@ -33,6 +33,7 @@ const UserSchema: Schema = new Schema(
     },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
+    mobile: { type: String, required: true },
     active: {
       type: Boolean,
       default: true,

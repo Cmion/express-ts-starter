@@ -1,9 +1,9 @@
-import { LoginDTO } from '../entity/login.entity';
+import { LoginDTO } from '../dto/login.dto';
 import { Response, Request, NextFunction } from 'express';
 import HttpStatus from '../../../enums/http-status.enums';
-import { RegisterDTO } from '../entity/register.entity';
+import { RegisterDTO } from '../dto/register.dto';
 import { AccountService } from '../service/account.service';
-import { VerifyDTO } from '../entity/verify.entity';
+import { VerifyDTO } from '../dto/verify.dto';
 
 export class AccountProcessor {
   static async test(request: Request, response: Response, next: NextFunction) {

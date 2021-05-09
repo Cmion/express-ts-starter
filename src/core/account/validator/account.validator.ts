@@ -10,6 +10,7 @@ export class AccountValidator {
     last_name: 'required|string',
     gender: `required|string|in:${["male", "female"]}`,
     password: 'required|min:6',
+    mobile: 'required|string',
   };
 
   static verify = {

@@ -3,6 +3,7 @@ export class User {
     first_name: string;
     last_name: string;
     gender: string;
+    mobile: string;
     deleted: boolean;
     account: string;
     role: string;

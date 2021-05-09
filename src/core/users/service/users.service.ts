@@ -28,6 +28,7 @@ export class UsersService extends ServiceFactory<UserModelType> {
         $setOnInsert: {
           account: userDetails.account,
           email: userDetails.email,
+          mobile: userDetails.mobile,
         },
         first_name: userDetails.first_name,
         last_name: userDetails.last_name,

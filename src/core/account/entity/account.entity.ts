@@ -1,5 +1,6 @@
 export class Account {
   email: string;
+  mobile: string;
   password: string;
   last_seen_at: Date;
   is_verified: boolean;

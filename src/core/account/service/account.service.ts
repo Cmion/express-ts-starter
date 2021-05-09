@@ -1,7 +1,7 @@
 import { ServiceFactory } from '../../factory/service/factory.service';
 import { AccountModel, AccountModelType, AccountDocument } from '../schema/account.schema';
-import { RegisterDTO } from '../entity/register.entity';
-import { LoginDTO } from '../entity/login.entity';
+import { RegisterDTO } from '../dto/register.dto';
+import { LoginDTO } from '../dto/login.dto';
 import { Query } from 'mongoose';
 import { pick } from 'lodash';
 import config from 'config';
@@ -18,8 +18,10 @@ import ConflictException from '../../../exceptions/conflict.exception';
 import { UsersService } from '../../users/service/users.service';
 import { UserDocument } from '../../users/schema/users.schema';
 import { FnHelpers } from '../../../utils/helpers/fn.helpers';
-import { VerifyDTO } from '../entity/verify.entity';
+import { VerifyDTO } from '../dto/verify.dto';
 import TooManyRequestsException from '../../../exceptions/too-many-requests.exception';
+import { MailFactory } from '../../factory/mail/factory.mail';
+import { SMSFactory } from '../../factory/sms/factory.sms';
 
 export class AccountService extends ServiceFactory<AccountModelType> {
   protected readonly usersService: UsersService;
@@ -47,7 +49,7 @@ export class AccountService extends ServiceFactory<AccountModelType> {
         verification_code_expiration: FnHelpers.generateVerificodeExpiration(),
       };
       const account = (
-        await this.model.create([{ email: registerDTO.email, password: registerDTO.password, ...accountAuth }], {
+        await this.model.create([{ ...pick(registerDTO, ['email', 'password', 'mobile']), ...accountAuth }], {
           session,
         })
       )[0];
@@ -65,7 +67,19 @@ export class AccountService extends ServiceFactory<AccountModelType> {
 
       await session.commitTransaction();
 
-      console.log(data);
+      const mailFactory = new MailFactory();
+
+      await mailFactory.useMailTrap(
+        account.email,
+        'Thanks for signing up with Fibonacci',
+        mailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
+        mailFactory.TextVerificationTemplate(accountAuth.verification_code),
+      );
+
+      const smsFactory = new SMSFactory();
+
+      await smsFactory.sendTwilioVerificationCode(registerDTO.mobile, accountAuth.verification_code);
+
       return data;
     } catch (e) {
       if (session) {
@@ -193,7 +207,20 @@ export class AccountService extends ServiceFactory<AccountModelType> {
       verification_code_retry_count: 0,
     };
 
-    this.model.findByIdAndUpdate(accountId, { $set: accountAuth }, { new: true });
+    const updatedAccount = await this.model.findByIdAndUpdate(accountId, { $set: accountAuth }, { new: true });
+
+    const mailFactory = new MailFactory();
+
+    await mailFactory.useMailTrap(
+      accountObject.email,
+      'Thanks for signing up with Fibonacci',
+      mailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
+      'Hello World',
+    );
+
+    const smsFactory = new SMSFactory();
+
+    await smsFactory.sendTwilioVerificationCode(updatedAccount.mobile, accountAuth.verification_code);
 
     return await this.toResponse({
       code: HttpStatus.OK,
