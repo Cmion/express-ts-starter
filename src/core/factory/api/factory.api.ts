@@ -1,4 +1,4 @@
-import config from 'config';
+import {config} from '../service/config.service';
 import { Express } from 'express';
 import controllers from '../../base/controller/base.controller';
 import NotFoundException from '../../../exceptions/not-found.exception';
@@ -9,7 +9,7 @@ import { SMSFactory } from '../sms/factory.sms';
 import { MailFactory } from '../mail/factory.mail';
 
 const prefix = config.get<string>('api.prefix');
-const version = config.get<string>('api.version');
+const version = config.get<number>('api.version');
 
 export class APIFactory {
   static configure(app: Express) {

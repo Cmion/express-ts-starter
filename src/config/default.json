@@ -1,0 +1,55 @@
+{
+    "port": "@@PORT",
+    "api": {
+        "default_locale": "en",
+        "prefix": "^/v[1-9]",
+        "version": 1,
+        "pagination": {
+            "items_per_page": 10
+        },
+        "expires_in": 44640000,
+        "verification_code_expiration": 15,
+        "verification_retry_max": 5,
+        "user_roles": [
+            "admin",
+            "user"
+        ]
+    },
+    "app": {
+        "app_name": "@@APP_NAME",
+        "environment": "@@NODE_ENV",
+        "base_url": "@@BASE_URL",
+        "port": "@@PORT",
+        "secrets": {
+            "server_secret": "@@SERVER_SECRET"
+        }
+    },
+    "database": {
+        "uri": "@@MONGODB_URI",
+        "test_uri": "@@MONGODB_TEST_URL"
+    },
+    "mail": {
+        "mail_trap": {
+            "port": "@@MAIL_TRAP_PORT",
+            "user": "@@MAIL_TRAP_USER",
+            "host": "@@MAIL_TRAP_HOST",
+            "pass": "@@MAIL_TRAP_PASS"
+        },
+        "send_grid": {
+            "port": 80
+        },
+        "mail_sender": "@@MAIL_SENDER"
+    },
+    "sms": {
+        "twilio": {
+            "sid": "@@TWILIO_ACCOUNT_SID",
+            "token": "@@TWILIO_AUTH_TOKEN",
+            "phone_number": "@@TWILIO_PHONE_NUMBER"
+        }
+    },
+    "worker": {
+        "rabbitmq": {
+            "uri": "@@RABBITMQ_URI"
+        }
+    }
+}

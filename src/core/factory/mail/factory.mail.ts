@@ -1,21 +1,20 @@
 import { createTransport } from 'nodemailer';
-import config from 'config';
+import { config } from '../service/config.service';
 import logger from '../../../setup/logger.setup';
-import { WorkerFactory } from '../worker/worker.factory';
+import { WorkerFactory } from '../worker/factory.worker';
 import { ConsumeMessage } from 'amqplib';
-import { SMSFactory } from '../sms/factory.sms';
 
 export class MailFactory {
   static MailQueue = 'mail-queue';
 
   protected static mailTrap() {
     return createTransport({
-      host: config.get<string>('mail.mailTrap.host'),
-      port: config.get<number>('mail.mailTrap.port'),
+      host: config.get<string>('mail.mail_trap.host'),
+      port: config.get<number>('mail.mail_trap.port'),
       // secure: false,
       auth: {
-        user: config.get<string>('mail.mailTrap.user'),
-        pass: config.get<string>('mail.mailTrap.pass'),
+        user: config.get<string>('mail.mail_trap.user'),
+        pass: config.get<string>('mail.mail_trap.pass'),
       },
     });
   }
@@ -42,7 +41,7 @@ export class MailFactory {
       const transporter = MailFactory.mailTrap();
 
       const options = {
-        from: config.get<string>('mail.mailSender'),
+        from: config.get<string>('mail.mail_sender'),
         to: recepient,
         subject,
         text,

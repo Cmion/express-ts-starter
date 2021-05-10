@@ -1,7 +1,7 @@
 import twilio from 'twilio';
-import config from 'config';
+import {config} from '../service/config.service';
 import logger from '../../../setup/logger.setup';
-import { WorkerFactory } from '../worker/worker.factory';
+import { WorkerFactory } from '../worker/factory.worker';
 import { ConsumeMessage } from 'amqplib';
 
 export class SMSFactory {
@@ -31,8 +31,8 @@ export class SMSFactory {
 
   protected static async $doTwilioVerificationCode(mobile: string, code: string) {
     const client = SMSFactory.setupTwilio();
-    const phoneNumber = config.get<string>('sms.twilio.phoneNumber');
-    const appName = config.get<string>('app.appName');
+    const phoneNumber = config.get<string>('sms.twilio.phone_number');
+    const appName = config.get<string>('app.app_name');
     try {
       const response = await client.messages.create({
         body: `Your ${appName} activation code is ${code}`,

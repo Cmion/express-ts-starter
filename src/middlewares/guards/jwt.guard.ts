@@ -1,5 +1,5 @@
 import { verify } from 'jsonwebtoken';
-import config from 'config';
+import { config } from '../../core/factory/service/config.service';
 import { Response, Request, NextFunction } from 'express';
 import { last, get } from 'lodash';
 import UnauthorizedException from '../../exceptions/unauthorized.exception';
@@ -22,7 +22,7 @@ const JWTGuard = async (request: Request, response: Response, next: NextFunction
 
   const jwtToken = last(tokenWithBearer?.split?.(' ') ?? []);
 
-  const serverSecret = config.get<string>('app.secrets.serverSecret');
+  const serverSecret = config.get<string>('app.secrets.server_secret');
 
   const appLocale = await locale.get(request?.locale);
 
@@ -41,12 +41,11 @@ const JWTGuard = async (request: Request, response: Response, next: NextFunction
       if (!account) {
         return next(new NotFoundException(get(appLocale, 'auth.account_not_found')));
       }
-      next()
+      next();
     });
   }
 
   if (!jwtToken) return next(new UnauthorizedException(get(appLocale, 'auth.invalid_user_access')));
-  
 };
 
 export default JWTGuard;

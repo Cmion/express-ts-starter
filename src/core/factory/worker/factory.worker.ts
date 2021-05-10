@@ -1,12 +1,12 @@
 import amqplib, { Channel, Connection, ConsumeMessage } from 'amqplib';
-import config from 'config';
+import { config } from '../service/config.service';
 import { isFunction } from 'lodash';
 
 export class WorkerFactory {
   static connection = WorkerFactory.connect();
 
   protected static async connect() {
-    const serverURI = config.get('worker.rabbitmq.uri');
+    const serverURI = config.get<string>('worker.rabbitmq.uri');
     try {
       const connection = await amqplib.connect(serverURI);
       return connection;

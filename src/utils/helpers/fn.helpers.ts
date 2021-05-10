@@ -1,5 +1,5 @@
 import { add } from 'date-fns';
-import config from 'config';
+import { config } from '../../core/factory/service/config.service';
 
 export class FnHelpers {
   static randomInt(start: number, end: number) {
@@ -23,7 +23,7 @@ export class FnHelpers {
   }
 
   static generateVerificodeExpiration(): Date {
-    const expirationDurationInMinutes = parseFloat(config.get('api.verificationCodeExpiration'));
+    const expirationDurationInMinutes = Number(config.get<string>('api.verification_code_expiration'));
     return add(new Date(), { minutes: expirationDurationInMinutes });
   }
 }

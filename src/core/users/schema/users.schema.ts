@@ -1,9 +1,8 @@
 import { Model, model, Query, Schema, Document } from 'mongoose';
-import config from 'config';
 import validator from 'validator';
 import { User } from '../entity/users.entity';
 import { SchemaConfigs } from '../../../interfaces/database-options.interface';
-
+import { config } from '../../factory/service/config.service';
 export type UserDocument = Document & User;
 
 export interface UserModelType extends Model<UserDocument> {
@@ -40,7 +39,7 @@ const UserSchema: Schema = new Schema(
     },
     role: {
       type: String,
-      enum: config.get<string[]>('api.userRoles'),
+      enum: config.get<string[]>('api.user_roles'),
       default: 'user',
     },
     deleted: {

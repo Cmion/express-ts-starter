@@ -24,7 +24,7 @@ const logger = createLogger({
       let argumentText = '';
       if (Object.keys(args).length) {
         if (process.env.NODE_ENV === 'development') {
-          argumentText = JSON.stringify(args, null, 2);
+          argumentText = JSON.stringify(args);
         } else {
           argumentText = JSON.stringify(args);
         }

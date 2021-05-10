@@ -4,7 +4,7 @@ import { RegisterDTO } from '../dto/register.dto';
 import { LoginDTO } from '../dto/login.dto';
 import { Query } from 'mongoose';
 import { pick } from 'lodash';
-import config from 'config';
+import { config } from '../../factory/service/config.service';
 import jwt from 'jsonwebtoken';
 import { isBefore } from 'date-fns';
 import UnauthorizedException from '../../../exceptions/unauthorized.exception';
@@ -74,7 +74,6 @@ export class AccountService extends ServiceFactory<AccountModelType> {
         MailFactory.TextVerificationTemplate(accountAuth.verification_code),
       );
 
-
       await SMSFactory.sendTwilioVerificationCode(registerDTO.mobile, accountAuth.verification_code);
 
       return data;
@@ -136,7 +135,7 @@ export class AccountService extends ServiceFactory<AccountModelType> {
       throw new ConflictException(appLocale.auth.account_verified);
     }
 
-    const retryMax = parseInt(config.get<string>('api.verificationRetryMax'));
+    const retryMax = Number(config.get('api.verification_retry_max'));
     const verificationRetryReached = accountObject.verification_code_retry_count >= retryMax;
 
     if (verificationRetryReached) {
@@ -213,7 +212,6 @@ export class AccountService extends ServiceFactory<AccountModelType> {
       'Hello World',
     );
 
-
     await SMSFactory.sendTwilioVerificationCode(updatedAccount.mobile, accountAuth.verification_code);
 
     return await this.toResponse({
@@ -232,7 +230,9 @@ export class AccountService extends ServiceFactory<AccountModelType> {
       accountId: account._id,
       ...pick(user, ['email']),
     };
-    return jwt.sign(obj, config.get('app.secrets.serverSecret'), { expiresIn: config.get('api.expiresIn') });
+    return jwt.sign(obj, config.get<string>('app.secrets.server_secret'), {
+      expiresIn: config.get<number>('api.expires_in'),
+    });
   }
 
   /**

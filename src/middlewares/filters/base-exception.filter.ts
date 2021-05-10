@@ -1,4 +1,4 @@
-import config from 'config';
+import { config } from '../../core/factory/service/config.service';
 import { Response, Request, NextFunction } from 'express';
 import HttpException from '../../exceptions/http.exceptions';
 import { ResponseMeta } from '../../interfaces/response-meta.interface';
@@ -20,7 +20,7 @@ const ExceptionFilter = (error: any, request: Request, response: Response, next:
     return response.status(error?.http_response?.status ?? 500).json(meta);
   }
 
-  if (`${config.util.getEnv('NODE_ENV')}` !== 'production') {
+  if (config.get<string>('app.environment') !== 'production') {
     logger.debug(error);
   }
 
