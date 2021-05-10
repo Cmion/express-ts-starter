@@ -6,7 +6,6 @@ const config: InitialOptionsTsJest = {
     ...tsjPreset.transform,
   },
   testEnvironment: 'node',
-  testPathIgnorePatterns: ["config"],
   setupFiles: ["dotenv/config"]
 }
 export default config

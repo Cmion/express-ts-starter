@@ -1,5 +1,4 @@
 {
-    "port": "@@PORT",
     "api": {
         "default_locale": "en",
         "prefix": "^/v[1-9]",
@@ -19,7 +18,7 @@
         "app_name": "@@APP_NAME",
         "environment": "@@NODE_ENV",
         "base_url": "@@BASE_URL",
-        "port": "@@PORT",
+        "port": 27890,
         "secrets": {
             "server_secret": "@@SERVER_SECRET"
         }

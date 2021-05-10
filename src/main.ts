@@ -30,7 +30,7 @@ const workers = database.then(async () => {
   return await APIFactory.$consumeWorkers();
 });
 
-const controllers = workers.then(() => {
+export const controllers = workers.then(() => {
   log.debug('Application routes loaded...');
   return APIFactory.configure(app);
 });

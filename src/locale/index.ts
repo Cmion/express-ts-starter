@@ -1,10 +1,10 @@
-import { config } from 'node-config-ts';
+import { config } from '../core/factory/service/config.service';
 import SupportedLocales from '../enums/supported-locale.enums';
 import { AppLocale } from '../interfaces/locales.interface';
 import enLocale from './en.locale.json';
 import { SupportedLocalesArray } from '../utils/constants/locale.contant';
 
-const defaultLocale = config?.api?.default_locale;
+const defaultLocale = config.get<string>('api.default_locale');
 
 const get = async (locale: string = defaultLocale): Promise<AppLocale> => {
   if (SupportedLocalesArray.includes(locale)) {
