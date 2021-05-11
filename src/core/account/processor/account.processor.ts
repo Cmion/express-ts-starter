@@ -45,7 +45,6 @@ export class AccountProcessor {
   }
 
   static async resendVerificationCode(request: Request, response: Response, next: NextFunction) {
-    const verifyDTO = request.body as VerifyDTO;
     const accountService = new AccountService();
     try {
       const user = await accountService.resendVerificationCode(request.accountId, request.locale);

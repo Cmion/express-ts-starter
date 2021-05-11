@@ -83,4 +83,4 @@ UserSchema.statics.schemaConfigs = (): SchemaConfigs => ({
   hiddenFields: ['delete', 'password'],
 });
 
-export const UserModel: UserModelType = model<UserDocument, UserModelType>('Users', UserSchema);
+export const UserModel: UserModelType = model<UserDocument, UserModelType>('users', UserSchema);

@@ -254,7 +254,8 @@ export class AccountService extends ServiceFactory<AccountModelType> {
     // if (!account.is_verified) {
     //   throw new UnauthorizedException(appLocale.auth.account_not_verified);
     // }
-    let authenticated = validatePassword(account.password, object.password);
+    const authenticated = await validatePassword(account.password, object.password);
+
     if (!authenticated) {
       return new UnauthorizedException(appLocale.auth.authentication_failed);
     }
