@@ -1,10 +1,10 @@
-import HttpStatus from '../enums/http-status.enums';
-import { HttpError } from '../utils/constants/http-errors.contants';
-import HttpException from './http.exceptions';
+import HttpStatus from '../enums/http-status.enum';
+import { HttpResponse } from '../enums/http-response.enum';
+import HttpException from './http.exception';
 
-class ConflictException extends HttpException {
+export class ConflictException extends HttpException {
   constructor(message?: string | Record<string, any>) {
-    super(message ?? HttpError.CONFLICT.message, HttpStatus.CONFLICT);
+    super(message ?? HttpResponse.CONFLICT.message, HttpStatus.CONFLICT);
   }
 }
 

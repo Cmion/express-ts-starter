@@ -5,6 +5,7 @@
     "invalid_user_access": "Could not authenticate user",
     "expired_token": "You are not logged in!",
     "authorization_error": "Failed to authenticate token",
+    "no_authorization_token": "No authorization token was provided",
     "duplicate_error": "Account already exists. Please log in!",
     "account_not_found": "Account not found",
     "credential_incorrect": "Email or password is not correct",
@@ -36,5 +37,11 @@
     "updated": "User successfully updated",
     "deleted": "User successfully deleted",
     "notFound": "User not found"
+  },
+  "account": {
+    "created": "Account successfully created",
+    "updated": "Account successfully updated",
+    "deleted": "Account successfully deleted",
+    "notFound": "Account not found"
   }
 }

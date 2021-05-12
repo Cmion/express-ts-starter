@@ -5,6 +5,7 @@ export interface AppLocale {
     invalid_user_access: string;
     expired_token: string;
     authorization_error: string;
+    no_authorization_token: string;
     duplicate_error: string;
     account_not_found: string;
     credential_incorrect: string;
@@ -32,6 +33,12 @@ export interface AppLocale {
     resourceNotFound: string;
   };
   users: {
+    created: string;
+    updated: string;
+    deleted: string;
+    notFound: string;
+  };
+  account: {
     created: string;
     updated: string;
     deleted: string;

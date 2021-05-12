@@ -27,7 +27,7 @@ const AccountSchema: Schema = new Schema(
       },
     },
     password: { type: String, required: true },
-    mobile: { type: String, required: true },
+    mobile: { type: String, required: true, index: true },
     last_seen_at: {
       type: Date,
       default: new Date(),

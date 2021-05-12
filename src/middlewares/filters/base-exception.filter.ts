@@ -1,9 +1,9 @@
 import { config } from '../../core/factory/service/config.service';
 import { Response, Request, NextFunction } from 'express';
-import HttpException from '../../exceptions/http.exceptions';
+import HttpException from '../../exceptions/http.exception';
 import { ResponseMeta } from '../../interfaces/response-meta.interface';
 import { AppResponse } from '../../classes/app-response.class';
-import { HttpError } from '../../utils/constants/http-errors.contants';
+import { HttpResponse } from '../../enums/http-response.enum';
 import logger from '../../setup/logger.setup';
 
 /**
@@ -30,11 +30,11 @@ const ExceptionFilter = (error: any, request: Request, response: Response, next:
         {},
         {
           http_response: {
-            message: HttpError[error?.status ?? '500'].message,
-            status: HttpError[error?.status ?? '500'].code,
+            message: HttpResponse[error?.status ?? '500'].message,
+            status: HttpResponse[error?.status ?? '500'].code,
           },
         },
-        HttpError[error?.status ?? '500'],
+        HttpResponse[error?.status ?? '500'],
         error,
       ),
     ),

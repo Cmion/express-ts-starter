@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
-import SupportedLocales from '../../enums/supported-locale.enums';
+import SupportedLocales from '../../enums/supported-locale.enum';
 import { SupportedLocalesArray } from '../../utils/constants/locale.contant';
 
 const LocaleGuard = (request: Request, response: Response, next: NextFunction) => {

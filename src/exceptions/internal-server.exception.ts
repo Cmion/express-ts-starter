@@ -1,10 +1,10 @@
-import HttpStatus from '../enums/http-status.enums';
-import { HttpError } from '../utils/constants/http-errors.contants';
-import HttpException from './http.exceptions';
+import HttpStatus from '../enums/http-status.enum';
+import { HttpResponse } from '../enums/http-response.enum';
+import HttpException from './http.exception';
 
-class InternalServerErrorException extends HttpException {
+export class InternalServerErrorException extends HttpException {
   constructor(message?: string | Record<string, any>) {
-    super(message ?? HttpError.INTERNAL_SERVER_ERROR.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    super(message ?? HttpResponse.INTERNAL_SERVER_ERROR.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
 

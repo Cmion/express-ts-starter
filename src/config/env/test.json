@@ -18,7 +18,7 @@
         "app_name": "@@APP_NAME",
         "environment": "@@NODE_ENV",
         "base_url": "@@BASE_URL",
-        "port": 27890,
+        "port": 27490,
         "secrets": {
             "server_secret": "@@SERVER_SECRET"
         }

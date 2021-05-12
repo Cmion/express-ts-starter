@@ -1,10 +1,10 @@
-import HttpStatus from '../enums/http-status.enums';
-import HttpException from './http.exceptions';
-import { HttpError } from '../utils/constants/http-errors.contants';
+import HttpStatus from '../enums/http-status.enum';
+import HttpException from './http.exception';
+import { HttpResponse } from '../enums/http-response.enum';
 
-class UnauthorizedException extends HttpException {
+export class UnauthorizedException extends HttpException {
   constructor(message?: string | Record<string, any>) {
-    super(message ?? HttpError.UNAUTHORIZED.message, HttpStatus.UNAUTHORIZED);
+    super(message ?? HttpResponse.UNAUTHORIZED.message, HttpStatus.UNAUTHORIZED);
   }
 }
 

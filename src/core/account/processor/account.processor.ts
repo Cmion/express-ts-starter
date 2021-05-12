@@ -1,6 +1,6 @@
 import { LoginDTO } from '../dto/login.dto';
 import { Response, Request, NextFunction } from 'express';
-import HttpStatus from '../../../enums/http-status.enums';
+import HttpStatus from '../../../enums/http-status.enum';
 import { RegisterDTO } from '../dto/register.dto';
 import { AccountService } from '../service/account.service';
 import { VerifyDTO } from '../dto/verify.dto';

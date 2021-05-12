@@ -5,6 +5,8 @@ import { isFunction, omit, isPlainObject } from 'lodash';
 import { AppResponse } from '../../../classes/app-response.class';
 import { QueryParser } from '../../../classes/query-parser.class';
 import { Paginate } from '../../../interfaces/pagination.interface';
+import { HttpResponse } from '../../../enums/http-response.enum';
+import HttpStatus from '../../../enums/http-status.enum';
 
 interface S extends Model<any> {
   schemaConfigs(): SchemaConfigs;
@@ -34,11 +36,10 @@ export class ServiceFactory<M extends S> {
    * toResponse
    */
   protected async toResponse(options: Record<string, any>) {
-    const queryParser = options?.query ? new QueryParser(options?.query): null;
+    const queryParser = options?.query ? new QueryParser(options?.query) : null;
     const pagination = options?.pagination ? Pagination.fromObject(options?.pagination) : null;
     let value = options?.value;
     const count = options?.count;
-
 
     if (value && queryParser && queryParser?.population) {
       value = await this.model.populate(value, queryParser.population);
@@ -60,7 +61,9 @@ export class ServiceFactory<M extends S> {
       }
     }
 
-    return AppResponse.toResponse(Object.assign({}, options, { pagination, value }));
+    const http_response = HttpResponse[options?.status ?? HttpStatus.OK];
+    const code = options?.code ?? http_response.status ?? HttpStatus.OK;
+    return AppResponse.toResponse(Object.assign({}, options, { pagination, value, http_response, code }));
   }
 
   protected countQueryDocuments(query: any[]) {

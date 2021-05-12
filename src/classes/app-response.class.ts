@@ -1,4 +1,4 @@
-import HttpStatus from '../enums/http-status.enums';
+import HttpStatus from '../enums/http-status.enum';
 import { AppResponseInterface } from '../interfaces/app-response.interface';
 import { ResponseMeta } from '../interfaces/response-meta.interface';
 import { Pagination } from './pagination.class';

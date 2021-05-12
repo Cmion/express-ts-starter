@@ -1,10 +1,10 @@
-import HttpStatus from '../enums/http-status.enums';
-import { HttpError } from '../utils/constants/http-errors.contants';
-import HttpException from './http.exceptions';
+import HttpStatus from '../enums/http-status.enum';
+import { HttpResponse } from '../enums/http-response.enum';
+import HttpException from './http.exception';
 
-class NotFoundException extends HttpException {
+export class NotFoundException extends HttpException {
   constructor(message?: string | Record<string, any>) {
-    super(message ?? HttpError.NOT_FOUND.message, HttpStatus.NOT_FOUND);
+    super(message ?? HttpResponse.NOT_FOUND.message, HttpStatus.NOT_FOUND);
   }
 }
 

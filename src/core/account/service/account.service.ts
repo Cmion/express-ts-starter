@@ -7,21 +7,26 @@ import { pick } from 'lodash';
 import { config } from '../../factory/service/config.service';
 import jwt from 'jsonwebtoken';
 import { isBefore } from 'date-fns';
-import UnauthorizedException from '../../../exceptions/unauthorized.exception';
 import { validatePassword } from '../../../utils/validators/password.validator';
 import locale from '../../../locale';
-import SupportedLocales from '../../../enums/supported-locale.enums';
+import SupportedLocales from '../../../enums/supported-locale.enum';
 import Mongoose from 'mongoose';
-import HttpException from '../../../exceptions/http.exceptions';
-import HttpStatus from '../../../enums/http-status.enums';
-import ConflictException from '../../../exceptions/conflict.exception';
+import HttpStatus from '../../../enums/http-status.enum';
 import { UsersService } from '../../users/service/users.service';
 import { UserDocument } from '../../users/schema/users.schema';
 import { FnHelpers } from '../../../utils/helpers/fn.helpers';
 import { VerifyDTO } from '../dto/verify.dto';
-import TooManyRequestsException from '../../../exceptions/too-many-requests.exception';
 import { MailFactory } from '../../factory/mail/factory.mail';
 import { SMSFactory } from '../../factory/sms/factory.sms';
+import {
+  UnauthorizedException,
+  HttpException,
+  ConflictException,
+  TooManyRequestsException,
+  UnproccessableEntityException,
+  GoneException,
+  NotFoundException,
+} from '../../../exceptions';
 
 export class AccountService extends ServiceFactory<AccountModelType> {
   protected readonly usersService: UsersService;
@@ -60,21 +65,23 @@ export class AccountService extends ServiceFactory<AccountModelType> {
 
       const data = await this.toResponse({
         token,
-        code: HttpStatus.CREATED,
-        message: appLocale.users.created,
+        status: HttpStatus.CREATED,
+        message: appLocale.account.created,
         value: Object.assign({}, { user: user.toJSON() }, account.toJSON()),
       });
 
       await session.commitTransaction();
 
-      await MailFactory.useMailTrap(
-        account.email,
-        'Thanks for signing up with Fibonacci',
-        MailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
-        MailFactory.TextVerificationTemplate(accountAuth.verification_code),
-      );
+      if (config.get<string>('app.environment') !== 'test') {
+        await MailFactory.useMailTrap(
+          account.email,
+          'Thanks for signing up with Fibonacci',
+          MailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
+          MailFactory.TextVerificationTemplate(accountAuth.verification_code),
+        );
 
-      await SMSFactory.sendTwilioVerificationCode(registerDTO.mobile, accountAuth.verification_code);
+        await SMSFactory.sendTwilioVerificationCode(registerDTO.mobile, accountAuth.verification_code);
+      }
 
       return data;
     } catch (e) {
@@ -86,12 +93,7 @@ export class AccountService extends ServiceFactory<AccountModelType> {
   }
 
   public async login(loginDTO: LoginDTO, requestLocale: string) {
-    let session;
-
     try {
-      session = await Mongoose.startSession();
-      session.startTransaction();
-
       const account = this.model.findOne({ email: loginDTO.email }).select('+password');
 
       const canLogin = await this.canLogin(account, loginDTO, requestLocale);
@@ -105,20 +107,15 @@ export class AccountService extends ServiceFactory<AccountModelType> {
 
       const data = await this.toResponse({
         token,
-        code: HttpStatus.OK,
+        status: HttpStatus.OK,
         value: {
           ...(await account.exec()).toJSON(),
           user,
         },
       });
 
-      await session.commitTransaction();
-
       return data;
     } catch (e) {
-      if (session) {
-        await session.abortTransaction();
-      }
       throw e;
     }
   }
@@ -128,14 +125,17 @@ export class AccountService extends ServiceFactory<AccountModelType> {
    */
   public async verify(verifyDTO: VerifyDTO, accountId: string, localeISO: string) {
     let account = this.model.findById(accountId);
+
     const appLocale = await locale.get(localeISO);
 
     const accountObject = await account.exec();
+
     if (accountObject.is_verified) {
       throw new ConflictException(appLocale.auth.account_verified);
     }
 
     const retryMax = Number(config.get('api.verification_retry_max'));
+
     const verificationRetryReached = accountObject.verification_code_retry_count >= retryMax;
 
     if (verificationRetryReached) {
@@ -143,10 +143,11 @@ export class AccountService extends ServiceFactory<AccountModelType> {
     }
 
     const codeExpired = isBefore(new Date(accountObject.verification_code_expiration), new Date());
-    console.log({ codeExpired }, new Date(accountObject.verification_code_expiration), new Date());
+
     const isValidCode = accountObject.verification_code === verifyDTO.verification_code;
+
     if (isValidCode && codeExpired) {
-      throw new UnauthorizedException(appLocale.auth.verification_code_expired);
+      throw new GoneException(appLocale.auth.verification_code_expired);
     }
 
     if (!isValidCode) {
@@ -156,7 +157,7 @@ export class AccountService extends ServiceFactory<AccountModelType> {
           verification_code_retry_count: accountObject.verification_code_retry_count + 1,
         },
       });
-      throw new UnauthorizedException(appLocale.auth.invalid_verification_code);
+      throw new UnproccessableEntityException(appLocale.auth.invalid_verification_code);
     }
 
     account = this.model.findByIdAndUpdate(
@@ -171,10 +172,11 @@ export class AccountService extends ServiceFactory<AccountModelType> {
       },
       { new: true },
     );
+
     const user = await this.usersService.findByAccount(accountId);
 
     const data = await this.toResponse({
-      code: HttpStatus.OK,
+      status: HttpStatus.OK,
       message: appLocale.auth.verification_successful,
       value: {
         ...(await account.exec()).toJSON(),
@@ -205,17 +207,18 @@ export class AccountService extends ServiceFactory<AccountModelType> {
 
     const updatedAccount = await this.model.findByIdAndUpdate(accountId, { $set: accountAuth }, { new: true });
 
-    await MailFactory.useMailTrap(
-      accountObject.email,
-      'Thanks for signing up with Fibonacci',
-      MailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
-      'Hello World',
-    );
+    if (config.get<string>('app.environment') !== 'test') {
+      await MailFactory.useMailTrap(
+        accountObject.email,
+        'Thanks for signing up with Fibonacci',
+        MailFactory.HTMLVerificationTemplate(accountAuth.verification_code),
+        'Hello World',
+      );
 
-    await SMSFactory.sendTwilioVerificationCode(updatedAccount.mobile, accountAuth.verification_code);
-
+      await SMSFactory.sendTwilioVerificationCode(updatedAccount.mobile, accountAuth.verification_code);
+    }
     return await this.toResponse({
-      code: HttpStatus.OK,
+      status: HttpStatus.OK,
       message: appLocale.auth.verification_code_resend,
     });
   }
@@ -249,7 +252,7 @@ export class AccountService extends ServiceFactory<AccountModelType> {
 
     const appLocale = await locale.get(localeISO);
     if (!account) {
-      return new UnauthorizedException(appLocale.auth.incorrect_credentials);
+      return new NotFoundException(appLocale.auth.account_does_not_exist);
     }
     // if (!account.is_verified) {
     //   throw new UnauthorizedException(appLocale.auth.account_not_verified);

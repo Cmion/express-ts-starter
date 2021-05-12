@@ -2,10 +2,10 @@ import HttpStatus from '../enums/http-status.enum';
 import HttpException from './http.exception';
 import { HttpResponse } from '../enums/http-response.enum';
 
-export class ForbiddenException extends HttpException {
+export class GoneException extends HttpException {
   constructor(message?: string | Record<string, any>) {
-    super(message ?? HttpResponse.FORBIDDEN.message, HttpStatus.FORBIDDEN);
+    super(message ?? HttpResponse.GONE.message, HttpStatus.GONE);
   }
 }
 
-export default ForbiddenException;
+export default GoneException;

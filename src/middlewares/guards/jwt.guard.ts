@@ -20,11 +20,15 @@ const _enumerateJWTError = (err: Error, appLocale: AppLocale) => {
 const JWTGuard = async (request: Request, response: Response, next: NextFunction) => {
   const tokenWithBearer = request.headers['authorization'];
 
+  const appLocale = await locale.get(request?.locale);
+
+  if(!tokenWithBearer) return next(new UnauthorizedException(get(appLocale, 'auth.no_authorization_token')));
+
   const jwtToken = last(tokenWithBearer?.split?.(' ') ?? []);
 
   const serverSecret = config.get<string>('app.secrets.server_secret');
 
-  const appLocale = await locale.get(request?.locale);
+
 
   if (jwtToken) {
     // Verify JWT Token.
@@ -45,7 +49,7 @@ const JWTGuard = async (request: Request, response: Response, next: NextFunction
     });
   }
 
-  if (!jwtToken) return next(new UnauthorizedException(get(appLocale, 'auth.invalid_user_access')));
+  if (!jwtToken) return next(new UnauthorizedException(get(appLocale, 'auth.no_authorization_token')));
 };
 
 export default JWTGuard;
