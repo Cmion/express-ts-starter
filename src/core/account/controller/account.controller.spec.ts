@@ -401,7 +401,7 @@ describe('Account Controller: Verification', () => {
   });
 });
 
-describe('Account Controller: Verification', () => {
+describe('Account Controller: Resend Verification', () => {
   it('should return 200: Verification code sent', (done) => {
     const appLocale = locale.getSync('en');
     const req = TestFactory.put(app, '/v1/resend-verification-code', {});
@@ -414,9 +414,11 @@ describe('Account Controller: Verification', () => {
       .expect(200)
       .then((res) => {
         expect(res.body).toEqual({
-          code: 200,
-          message: appLocale.auth.verification_code_resend,
-          http_response: HttpResponse.OK,
+          meta: {
+            code: 200,
+            message: appLocale.auth.verification_code_resend,
+            http_response: HttpResponse.OK,
+          },
         });
         done();
       })
@@ -426,10 +428,10 @@ describe('Account Controller: Verification', () => {
   it('should return 409: when account has already been verified', (done) => {
     const appLocale = locale.getSync('en');
     const req = TestFactory.put(app, '/v1/resend-verification-code', {});
-    // Emails = tjohns@gov.uk
+    // Emails = tspensb@gov.uk
     req.set(
       'Authorization',
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2MDliMDdkNmI1MDM5ZjFlYTk2NzhhYWMiLCJlbWFpbCI6InRqb2huc0Bnb3YudWsiLCJpYXQiOjE2MjA4MTk1NzEsImV4cCI6MTY2NTQ1OTU3MX0.JX5hNuAS2b-G6qTrqh6dCjbMjYQbZrIJEciaz6dB3d8',
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2MDk4MzBkNjA5NDVlNzRmZmE4MzUwOWQiLCJlbWFpbCI6InRzcGVuc2JAZ292LnVrIiwiaWF0IjoxNjIwODQyNTkyLCJleHAiOjE2NjU0ODI1OTJ9.3nMtwfwixA2xfkz8VhAgPebEneOtjeJQMyW320q2gvw',
     );
     req
       .expect(409)

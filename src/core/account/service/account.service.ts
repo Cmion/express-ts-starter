@@ -153,8 +153,8 @@ export class AccountService extends ServiceFactory<AccountModelType> {
     if (!isValidCode) {
       //@ts-ignore
       this.model.findByIdAndUpdate(accountId, {
-        $set: {
-          verification_code_retry_count: accountObject.verification_code_retry_count + 1,
+        $inc: {
+          verification_code_retry_count: 1,
         },
       });
       throw new UnproccessableEntityException(appLocale.auth.invalid_verification_code);

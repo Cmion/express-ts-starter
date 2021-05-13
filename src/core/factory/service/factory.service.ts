@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { FilterQuery, Model, Query } from 'mongoose';
 import { Pagination } from '../../../classes/pagination.class';
 import { SchemaConfigs } from '../../../interfaces/database-options.interface';
 import { isFunction, omit, isPlainObject } from 'lodash';
@@ -8,6 +8,9 @@ import { Paginate } from '../../../interfaces/pagination.interface';
 import { HttpResponse } from '../../../enums/http-response.enum';
 import HttpStatus from '../../../enums/http-status.enum';
 
+
+// TODO: Added a class called Aggregation Pipeline
+// AggregationPipepline.$count().$expr().$or()
 interface S extends Model<any> {
   schemaConfigs(): SchemaConfigs;
 }
@@ -98,5 +101,83 @@ export class ServiceFactory<M extends S> {
       value: await query.select(queryParser.selection).exec(),
       count: await this.model.countDocuments(queryParser.query).exec(),
     };
+  }
+
+  /**
+   * Builds a projection object given an array of projectors and projection type usually 0 | 1 for mongodb
+   * @param projectors 
+   * @param type 
+   * @returns 
+   */
+  protected buildProjection(projectors: string[], type: 0 | 1 = 1): Record<string, number> {
+    return projectors.reduce((acc: Record<string, number>, current: string) => {
+      return { ...acc, [current]: type };
+    }, {});
+  }
+
+  /**
+   * Performs the findOne operation with an include projection
+   * @param query 
+   * @param include 
+   * @returns 
+   */
+  protected findOneAndInclude(query: FilterQuery<any>, include: string[] = []): Query<any, any, {}> {
+    const projections = this.buildProjection(include, 1);
+    return this.model.findOne(query, projections);
+  }
+
+  /**
+   * Performs the find operation with an include projection
+   * @param query 
+   * @param include 
+   * @returns 
+   */
+  protected findAllAndInclude(query: FilterQuery<any>, include: string[] = []): Query<any, any, {}> {
+    const projections = this.buildProjection(include, 1);
+    return this.model.find(query, projections);
+  }
+
+  /**
+   * Performs the findById operation with an include projection
+   * @param id 
+   * @param include 
+   * @returns 
+   */
+  protected findByIdAndInclude(id: string, include: string[] = []): Query<any, any, {}> {
+    const projections = this.buildProjection(include, 1);
+    return this.model.findById(id, projections);
+  }
+
+  /**
+   * Performs the findOne operation with an exclude projection
+   * @param query 
+   * @param exclude 
+   * @returns 
+   */
+  protected findOneAndExclude(query: FilterQuery<any>, exclude: string[] = []): Query<any, any, {}> {
+    const projections = this.buildProjection(exclude, 0);
+    return this.model.findOne(query, projections);
+  }
+
+  /**
+   * Performs the find operation with an exclude projection
+   * @param query 
+   * @param exclude 
+   * @returns 
+   */
+  protected findAllAndExclude(query: FilterQuery<any>, exclude: string[] = []): Query<any, any, {}> {
+    const projections = this.buildProjection(exclude, 0);
+    return this.model.find(query, projections);
+  }
+
+  /**
+   * Performs the findById operation with an exclude projection
+   * @param id 
+   * @param exclude 
+   * @returns 
+   */
+  protected findByIdAndExclude(id: string, exclude: string[] = []): Query<any, any, {}> {
+    const projections = this.buildProjection(exclude, 0);
+    return this.model.findById(id, projections);
   }
 }
