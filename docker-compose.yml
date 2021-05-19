@@ -1,0 +1,28 @@
+version: '3.8'
+
+services: 
+    authenication:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: dev
+        volumes: 
+            - ./src:/home/node/authenication/src
+            - ./.env:/home/node/authenication/.env
+            - ./nodemon.json:/home/node/app/nodemon.json
+        container_name: starter-authenication
+        expose: 
+            - '8000'
+        ports: 
+            - '8000:8000'
+        command: yarn start:dev
+        environment: 
+            NODE_ENV: development
+        links:
+            - rabbitmq
+    rabbitmq:
+        image: rabbitmq:3.8.16
+        container_name: rabbitmq
+        ports: 
+            - 5672:5672
+            - 15672:15672

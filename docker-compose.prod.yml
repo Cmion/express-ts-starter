@@ -1,0 +1,9 @@
+version: '3.8'
+
+services: 
+    authenication:
+        build:
+            target: production
+        command: yarn start:prod
+        environment: 
+            NODE_ENV: production
