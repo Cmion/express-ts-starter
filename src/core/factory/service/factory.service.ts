@@ -10,7 +10,7 @@ import HttpStatus from '../../../enums/http-status.enum';
 
 
 // TODO: Added a class called Aggregation Pipeline
-// AggregationPipepline.$count().$expr().$or()
+// AggregationPipepline.$count(new QueryBuilder().$expr().$or({name: 'john'}, {name: 'felix'}))
 interface S extends Model<any> {
   schemaConfigs(): SchemaConfigs;
 }
