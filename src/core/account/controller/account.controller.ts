@@ -1,21 +1,18 @@
 import { AccountProcessor } from '../processor/account.processor';
-import { ControllerFactory } from '../../factory/controller/factory.controller';
+import { AdapterFactory } from '../../factory/adapters/factory.adapter';
 import ValidatorGuard from '../../../middlewares/guards/validator.guard';
 import { AccountValidator } from '../validator/account.validator';
 import JWTGuard from '../../../middlewares/guards/jwt.guard';
 
-const controller = new ControllerFactory([], []);
+const controller = new AdapterFactory([], []);
 const processor = AccountProcessor;
 
-controller.chain([
-  ControllerFactory.create('/test', 'get', processor.test, []),
-  ControllerFactory.create('/login', 'post', processor.login, [ValidatorGuard(AccountValidator.login)]),
-  ControllerFactory.create('/register', 'post', processor.register, [ValidatorGuard(AccountValidator.register)]),
-  ControllerFactory.create('/verify-account', 'post', processor.verify, [
-    ValidatorGuard(AccountValidator.verify),
-    JWTGuard,
-  ]),
-  ControllerFactory.create('/resend-verification-code', 'put', processor.resendVerificationCode, [JWTGuard]),
-]);
+controller.chain(
+  AdapterFactory.get('/test', processor.test, []),
+  AdapterFactory.post('/login', processor.login, [ValidatorGuard(AccountValidator.login)]),
+  AdapterFactory.post('/register', processor.register, [ValidatorGuard(AccountValidator.register)]),
+  AdapterFactory.post('/verify-account', processor.verify, [ValidatorGuard(AccountValidator.verify), JWTGuard]),
+  AdapterFactory.put('/resend-verification-code', processor.resendVerificationCode, [JWTGuard]),
+);
 
 export default controller.emit();

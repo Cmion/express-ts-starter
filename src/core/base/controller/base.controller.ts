@@ -1,7 +1,7 @@
 import account from '../../account/controller/account.controller';
-import { ControllerFactory } from '../../factory/controller/factory.controller';
+import { AdapterFactory } from '../../factory/adapters/factory.adapter';
 
-const baseController = new ControllerFactory().emit();
+const baseController = new AdapterFactory().emit();
 
 baseController.use(account);
 

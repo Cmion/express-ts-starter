@@ -2,7 +2,10 @@ FROM node:14 as base
 
 WORKDIR /home/node/authenication
 
-COPY package.json .
+# Copy application dependency manifests to the container image.
+# A wildcard is used to ensure both package.json AND package-lock.json are copied.
+# Copying this separately prevents re-running npm install on every code change.
+COPY package.json *.lock tsconfig.json tsconfig.build.json ./
 
 RUN yarn
 

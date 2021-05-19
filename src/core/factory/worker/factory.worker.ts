@@ -49,4 +49,9 @@ export class WorkerFactory {
 
     return channel;
   }
+
+  static close(channel?: Connection, client?: Channel): void {
+    if (channel) channel.close();
+    if (client) client.close();
+  }
 }
