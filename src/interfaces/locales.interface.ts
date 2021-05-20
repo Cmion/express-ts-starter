@@ -12,7 +12,7 @@ export interface AppLocale {
     account_suspended: string;
     account_archived: string;
     password_reset_unauthorized: string;
-    password_reset_link_expired: string;
+    password_reset_code_expired: string;
     verification_successful: string;
     verification_unauthorized: string;
     account_does_not_exist: string;
@@ -27,6 +27,12 @@ export interface AppLocale {
     social_account_error: string;
     verification_code_retry_reached: string;
     verification_code_resend: string;
+    change_password: {
+      is_previous_password: string;
+      is_current_password: string;
+      incorrect_password: string;
+      success: string;
+    };
   };
   error: {
     server: string;

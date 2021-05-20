@@ -8,7 +8,8 @@ const ValidatorGuard = (rules: Record<string, any>) => async (
   response: Response,
   next: NextFunction,
 ) => {
-  if (request.method === 'POST') {
+  const validatorMethods = ['POST', 'PUT', 'PATCH'];
+  if (validatorMethods.includes(request.method)) {
     try {
       const body = request.body;
       const validator = new Validator(body, rules);

@@ -228,7 +228,7 @@ export const HttpResponse = Object.freeze({
     status: 413,
     message: 'The request entity is larger than the server is willing or able to process.',
   },
-  'REQUEST-URI_TOO_LONG': {
+  REQUEST_URI_TOO_LONG: {
     status: 414,
     message: 'The request URI is longer than the server is willing to interpret.',
   },

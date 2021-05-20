@@ -12,7 +12,7 @@
     "account_suspended": "Your account has been suspended, Contact us to see why",
     "account_archived": "Your account has been archived",
     "password_reset_unauthorized": "You are not authorized to perform password reset",
-    "password_reset_link_expired": "Your reset link and code has expired, please request a new one",
+    "password_reset_code_expired": "Your reset code has expired, please request a new one",
     "verification_successful": "Verification successful!",
     "verification_unauthorized": "You are not authorized to perform verification",
     "verification_code_retry_reached": "You've reached your max retry limit, please request a new code",
@@ -26,7 +26,13 @@
     "incorrect_password": "Operation failed, incorrect password!",
     "email_does_not_exist": "Email does not exist",
     "verification_mobile_sent": "Verification code sent to mobile number",
-    "social_account_error": "Sorry we cannot verify your social account at the moment"
+    "social_account_error": "Sorry we cannot verify your social account at the moment",
+    "change_password": {
+      "is_previous_password": "You can't use a password you have used before, try another.",
+      "is_current_password": "Your new password is the same as the current one, try another.",
+      "incorrect_password": "The password you provided is incorrect",
+      "success": "Password successfully changed"
+    }
   },
   "error": {
     "server": "Error in setup interaction",

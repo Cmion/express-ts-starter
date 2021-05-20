@@ -6,6 +6,7 @@ services:
             context: .
             dockerfile: Dockerfile
             target: dev
+        restart: unless-stopped
         volumes: 
             - ./src:/home/node/authenication/src
             - ./.env:/home/node/authenication/.env
@@ -23,6 +24,7 @@ services:
         depends_on:
             - rabbitmq
     rabbitmq:
+        restart: unless-stopped
         image: rabbitmq:3.8.16
         container_name: rabbitmq
         ports: 

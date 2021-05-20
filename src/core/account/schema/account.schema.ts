@@ -1,4 +1,4 @@
-import { Model, model, Query, Schema, Document } from 'mongoose';
+import { Model, model, Query, Schema, Document, NativeError } from 'mongoose';
 import { genSalt as generateSalt, hash as hashPassword } from 'bcrypt';
 import validator from 'validator';
 import { Account } from '../entity/account.entity';
@@ -47,6 +47,22 @@ const AccountSchema: Schema = new Schema(
       default: false,
       select: false,
     },
+    password_log: {
+      type: Array,
+      default: [],
+    },
+    reset_password_code: {
+      type: String,
+      default: null,
+    },
+    reset_password_code_expiration: {
+      type: Date,
+      default: null,
+    },
+    reset_password_code_retry_count: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     autoCreate: true,
@@ -78,27 +94,6 @@ AccountSchema.pre<AccountDocument>('save', function (next) {
   });
 });
 
-AccountSchema.pre<AccountQuery>('findOneAndUpdate', function (next) {
-  const updateFields = this.getUpdate()[0];
-
-  // Generate a salt and use it to hash the user's password
-  if (updateFields?.password) {
-    generateSalt(10, (genSaltError, salt) => {
-      if (genSaltError) {
-        return next(genSaltError);
-      }
-
-      hashPassword(updateFields.password, salt, (err, hash) => {
-        if (err) {
-          return next(err);
-        }
-        updateFields.password = hash;
-        return next(err);
-      });
-    });
-  }
-  return next(null);
-});
 
 // Statics
 AccountSchema.statics.findByEmail = async function findByEmail(
@@ -120,6 +115,10 @@ AccountSchema.statics.schemaConfigs = (): SchemaConfigs => ({
     'verification_code',
     'verification_code_expiration',
     'verification_code_retry_count',
+    'password_log',
+    'reset_password_code',
+    'reset_password_code_expiration',
+    'reset_password_code_retry_count',
   ],
 });
 

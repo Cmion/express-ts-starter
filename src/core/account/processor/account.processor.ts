@@ -4,6 +4,7 @@ import HttpStatus from '../../../enums/http-status.enum';
 import { RegisterDTO } from '../dto/register.dto';
 import { AccountService } from '../service/account.service';
 import { VerifyDTO } from '../dto/verify.dto';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
 
 export class AccountProcessor {
   static async test(request: Request, response: Response, next: NextFunction) {
@@ -49,6 +50,27 @@ export class AccountProcessor {
     try {
       const user = await accountService.resendVerificationCode(request.accountId, request.locale);
       return response.status(HttpStatus.OK).json(user);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async changePassword(request: Request, response: Response, next: NextFunction) {
+    const accountService = new AccountService();
+    const changePasswordDTO = request.body as ChangePasswordDTO;
+    try {
+      const user = await accountService.changePassword(changePasswordDTO, request.accountId, request.locale);
+      return response.status(HttpStatus.OK).json(user);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async migrate(request: Request, response: Response, next: NextFunction) {
+    const accountService = new AccountService();
+    try {
+      const migrationResponse = await accountService.migrate();
+      return response.status(HttpStatus.OK).json(migrationResponse);
     } catch (e) {
       next(e);
     }

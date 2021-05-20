@@ -3,11 +3,10 @@ import { AccountModel, AccountModelType, AccountDocument } from '../schema/accou
 import { RegisterDTO } from '../dto/register.dto';
 import { LoginDTO } from '../dto/login.dto';
 import { Query } from 'mongoose';
-import { pick } from 'lodash';
+import { isNil, pick } from 'lodash';
 import { config } from '../../factory/service/config.service';
 import jwt from 'jsonwebtoken';
 import { isBefore } from 'date-fns';
-import { validatePassword } from '../../../utils/validators/password.validator';
 import locale from '../../../locale';
 import SupportedLocales from '../../../enums/supported-locale.enum';
 import Mongoose from 'mongoose';
@@ -26,7 +25,11 @@ import {
   UnproccessableEntityException,
   GoneException,
   NotFoundException,
+  BadRequestException,
 } from '../../../exceptions';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
+import logger from '../../../setup/logger.setup';
+import { PasswordManager } from '../../../utils/helpers/password-manager';
 
 export class AccountService extends ServiceFactory<AccountModelType> {
   protected readonly usersService: UsersService;
@@ -67,7 +70,6 @@ export class AccountService extends ServiceFactory<AccountModelType> {
         token,
         status: HttpStatus.CREATED,
         message: appLocale.account.created,
-        value: Object.assign({}, { user: user.toJSON() }, account.toJSON()),
       });
 
       await session.commitTransaction();
@@ -224,11 +226,113 @@ export class AccountService extends ServiceFactory<AccountModelType> {
   }
 
   /**
+   * changePassword
+   */
+
+  // TODO: Implement Date Transfer Validation
+  public async changePassword(changePasswordDTO: ChangePasswordDTO, accountId: string, localeISO: string) {
+    let account = this.model.findById(accountId);
+    const appLocale = await locale.get(localeISO);
+
+    const accountObject = await account.exec();
+
+    // Checks if the provided current password matches the hashed password
+    const isCurrentPassword = await PasswordManager.validate(
+      accountObject.password,
+      changePasswordDTO.current_password,
+    );
+    if (!isCurrentPassword) {
+      throw new UnauthorizedException(appLocale.auth.change_password.incorrect_password);
+    }
+
+    // Checks if the new password is the same as the old one
+    const isSamePassword = changePasswordDTO.current_password === changePasswordDTO.new_password;
+
+    if (isSamePassword) {
+      throw new BadRequestException(appLocale.auth.change_password.is_current_password);
+    }
+
+    const passwordLog = accountObject.password_log;
+    const isPreviousPassword = PasswordManager.findInLog(passwordLog, changePasswordDTO.new_password);
+
+    // Checks if the new password exists in the password log
+    if (!isNil(isPreviousPassword)) {
+      throw new ConflictException(appLocale.auth.change_password.is_previous_password);
+    }
+
+    const updatedAccount = await this.model.findByIdAndUpdate(
+      accountId,
+      {
+        $set: {
+          password: await PasswordManager.hash(changePasswordDTO.new_password),
+        },
+        $push: {
+          password_log: { $each: [{ password: accountObject.password, log_date: new Date() }], $sort: { score: -1 } },
+        },
+      },
+      { new: true },
+    );
+
+    const user = await this.usersService.findByAccount(accountId);
+
+    const data = await this.toResponse({
+      status: HttpStatus.OK,
+      message: appLocale.auth.change_password.success,
+      value: {
+        ...updatedAccount.toJSON(),
+        user,
+      },
+    });
+
+    return data;
+  }
+
+  public async migrate() {
+    let session = await Mongoose.startSession();
+    try {
+      session.startTransaction();
+      // const accounts = await this.model.find();
+      // for (const account of accounts) {
+      //   const update = this.model.findByIdAndUpdate(
+      //     account._id,
+      //     {
+      //       $set: {
+      //         password_log: [],
+      //         reset_password_code: null,
+      //         reset_password_code_expiration: null,
+      //         reset_password_code_retry_count: 0,
+      //       },
+      //     },
+      //     { new: true, session },
+      //   );
+
+      //   if ((await update).password_log) {
+      //     logger.info(`migration on ${account._id} successful`);
+      //   }
+      // }
+
+      await session.commitTransaction();
+
+      const data = await this.toResponse({
+        status: HttpStatus.OK,
+        message: 'Migration successfull',
+      });
+
+      return data;
+    } catch (e) {
+      if (session) {
+        await session.abortTransaction();
+      }
+      throw e;
+    }
+  }
+
+  /**
    * @param {Object} account The account properties
    * @param {Object} user The user properties
    * @return {Promise<String>}
    */
-  protected async signToken(account: AccountDocument, user: UserDocument) {
+  private async signToken(account: AccountDocument, user: UserDocument) {
     const obj = {
       accountId: account._id,
       ...pick(user, ['email']),
@@ -243,7 +347,7 @@ export class AccountService extends ServiceFactory<AccountModelType> {
    * @param {Object} object The object properties
    * @return {Object} returns the api error if main cannot be verified
    */
-  protected async canLogin(
+  private async canLogin(
     accountDoc: Query<AccountDocument, AccountDocument>,
     object: Record<string, any>,
     localeISO: string = SupportedLocales.EN,
@@ -257,7 +361,7 @@ export class AccountService extends ServiceFactory<AccountModelType> {
     // if (!account.is_verified) {
     //   throw new UnauthorizedException(appLocale.auth.account_not_verified);
     // }
-    const authenticated = await validatePassword(account.password, object.password);
+    const authenticated = await PasswordManager.validate(account.password, object.password);
 
     if (!authenticated) {
       return new UnauthorizedException(appLocale.auth.authentication_failed);
