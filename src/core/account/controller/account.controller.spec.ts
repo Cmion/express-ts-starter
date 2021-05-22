@@ -446,3 +446,7 @@ describe('Account Controller: Resend Verification', () => {
       .catch((err) => done(err));
   });
 });
+
+describe("Account Controller: Change password", () => {
+  
+})

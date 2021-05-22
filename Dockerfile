@@ -11,19 +11,19 @@ RUN yarn
 
 COPY . . 
 
+# DEVELOPMENT
+FROM base as dev
+
+ENV NODE_ENV=development
+
+
 
 # PRODUCTION
 FROM base as production
 
 ENV NODE_PATH=./build
 
+ENV NODE_ENV=production
+
 RUN yarn build
-
-
-
-# DEVELOPMENT
-FROM base as dev
-
-ENV NODE_ENV=development
-
 

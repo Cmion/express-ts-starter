@@ -11,7 +11,7 @@ services:
             - ./src:/home/node/authenication/src
             - ./.env:/home/node/authenication/.env
             - ./nodemon.json:/home/node/app/nodemon.json
-        container_name: starter-authentication
+        container_name: starter_authentication
         expose: 
             - '8000'
         ports: 

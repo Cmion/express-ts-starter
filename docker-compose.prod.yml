@@ -1,9 +1,13 @@
 version: '3.8'
 
 services: 
-    authenication:
+    authentication:
         build:
             target: production
         command: yarn start:prod
+        restart: always
         environment: 
             NODE_ENV: production
+        env_file: ./.env
+    rabbitmq:
+        restart: always
