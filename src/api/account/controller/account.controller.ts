@@ -1,5 +1,5 @@
 import { AccountProcessor } from '../processor/account.processor';
-import { AdapterFactory } from '../../factory/adapters/factory.adapter';
+import { AdapterFactory } from '../../../core/factory/adapters/factory.adapter';
 import ValidatorGuard from '../../../middlewares/guards/validator.guard';
 import { AccountValidator } from '../validator/account.validator';
 import JWTGuard from '../../../middlewares/guards/jwt.guard';

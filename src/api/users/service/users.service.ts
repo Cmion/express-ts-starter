@@ -1,4 +1,4 @@
-import { ServiceFactory } from '../../factory/service/factory.service';
+import { ServiceFactory } from '../../../core/factory/service/factory.service';
 import { UserModel, UserModelType } from '../schema/users.schema';
 import { ClientSession } from 'mongoose';
 import { User } from '../entity/users.entity';

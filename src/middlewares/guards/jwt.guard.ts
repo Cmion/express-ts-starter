@@ -3,7 +3,7 @@ import { config } from '../../core/factory/service/config.service';
 import { Response, Request, NextFunction } from 'express';
 import { last, get } from 'lodash';
 import UnauthorizedException from '../../exceptions/unauthorized.exception';
-import { AccountModel } from '../../core/account/schema/account.schema';
+import { AccountModel } from '../../api/account/schema/account.schema';
 import locale from '../../locale';
 import { AppLocale } from '../../interfaces/locales.interface';
 import NotFoundException from '../../exceptions/not-found.exception';

@@ -1,10 +1,10 @@
-import { ServiceFactory } from '../../factory/service/factory.service';
+import { ServiceFactory } from '../../../core/factory/service/factory.service';
 import { AccountModel, AccountModelType, AccountDocument } from '../schema/account.schema';
 import { RegisterDTO } from '../dto/register.dto';
 import { LoginDTO } from '../dto/login.dto';
 import { Query } from 'mongoose';
 import { isNil, pick } from 'lodash';
-import { config } from '../../factory/service/config.service';
+import { config } from '../../../core/factory/service/config.service';
 import jwt from 'jsonwebtoken';
 import { isBefore } from 'date-fns';
 import locale from '../../../locale';
@@ -15,8 +15,8 @@ import { UsersService } from '../../users/service/users.service';
 import { UserDocument } from '../../users/schema/users.schema';
 import { FnHelpers } from '../../../utils/helpers/fn.helpers';
 import { VerifyDTO } from '../dto/verify.dto';
-import { MailFactory } from '../../factory/mail/factory.mail';
-import { SMSFactory } from '../../factory/sms/factory.sms';
+import { MailFactory } from '../../../core/factory/mail/factory.mail';
+import { SMSFactory } from '../../../core/factory/sms/factory.sms';
 import {
   UnauthorizedException,
   HttpException,

@@ -1,4 +1,4 @@
-import account from '../../account/controller/account.controller';
+import account from '../../../api/account/controller/account.controller';
 import { AdapterFactory } from '../../factory/adapters/factory.adapter';
 
 const baseController = new AdapterFactory().emit();

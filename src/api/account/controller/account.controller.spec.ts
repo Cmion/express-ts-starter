@@ -1,14 +1,14 @@
 import request from 'supertest';
 import { app as $app } from '../../../main';
 import { HttpResponse } from '../../../enums/http-response.enum';
-import { APIFactory } from '../../factory/api/factory.api';
+import { APIFactory } from '../../../core/factory/api/factory.api';
 import locale from '../../../locale';
 import { getSync } from '../../../locale/index';
 import { AccountModel } from '../schema/account.schema';
 import { FnHelpers } from '../../../utils/helpers/fn.helpers';
 import { add } from 'date-fns';
 import { UserModel } from '../../users/schema/users.schema';
-import { TestFactory } from '../../factory/testing/factory.testing';
+import { TestFactory } from '../../../core/factory/testing/factory.testing';
 
 const app = APIFactory.configure($app);
 
