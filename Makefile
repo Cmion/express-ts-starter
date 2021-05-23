@@ -1,5 +1,5 @@
-up:
-	docker-compose up -d
+up-dev:
+	docker-compose -f docker/docker-compose.yml up -d
 
 start:
 	docker-compose start
@@ -8,7 +8,7 @@ restart:
 	docker-compose restart
 
 up-prod:
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+	docker-compose -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
 
 down: 
 	docker-compose down
@@ -16,8 +16,8 @@ down:
 build:
 	docker-compose build
 
-create-pod:
-	kubectl create -f k8s/pod.yml
+deploy:
+	kubectl create -f k8s/deployment.yml
 
-delete-pod:
-	kubectl delete pod authentication
+service:
+	kubectl create -f k8s/service.yml

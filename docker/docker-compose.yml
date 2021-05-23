@@ -8,9 +8,9 @@ services:
             target: dev
         restart: unless-stopped
         volumes: 
-            - ./src:/home/node/authenication/src
-            - ./.env:/home/node/authenication/.env
-            - ./nodemon.json:/home/node/app/nodemon.json
+            - ./src:/home/app/src
+            - ./.env:/home/app/.env
+            - ./nodemon.json:/home/app/nodemon.json
         container_name: starter_authentication
         expose: 
             - '8000'
